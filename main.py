@@ -5,10 +5,6 @@ from router.dashboard import dashboard_bp
 
 app = Flask(__name__)
 
-@app.route('/')
-def hello_world():
-    return '<h1>Hello, World!</h1>'
-
 app.register_blueprint(tickets_bp)
 app.register_blueprint(news_bp)
 app.register_blueprint(dashboard_bp)

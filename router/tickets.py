@@ -12,9 +12,7 @@ def get_ticket():
 
 @tickets_bp.route('/tickets', methods=['POST'])
 def add_ticket():
-    req = request
-    
-    return ticket_controller.add_ticket_controller(req)
+    return ticket_controller.add_ticket_controller(request)
 
 @tickets_bp.route('/tickets', methods=['DELETE'])
 def delete_ticket():
