@@ -6,8 +6,20 @@ from controller import ticket_controller
 
 tickets_bp = Blueprint('tickets', __name__)
 
+@tickets_bp.route('/tickets')
+def get_ticket():
+    pass
+
 @tickets_bp.route('/tickets', methods=['POST'])
-def create_ticket():
+def add_ticket():
     req = request
     
-    return ticket_controller.create_ticket_controller(req)
+    return ticket_controller.add_ticket_controller(req)
+
+@tickets_bp.route('/tickets', methods=['DELETE'])
+def delete_ticket():
+    pass
+
+@tickets_bp.route('/tickets', methods=['PUT'])
+def put_ticket():
+    pass
