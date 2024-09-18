@@ -5,10 +5,10 @@ import time, os
 
 from models import db, Ticket
 
-from router.main_page import main_page_bp
-from router.tickets_page import tickets_bp
-from router.news_page import news_bp
-from router.dashboard_page import dashboard_bp
+from router.main_router import main_page_bp
+from router.tickets_router import tickets_bp
+from router.news_router import news_bp
+from router.dashboard_router import dashboard_bp
 
 app = Flask(__name__)
 

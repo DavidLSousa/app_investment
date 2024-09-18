@@ -1,18 +1,21 @@
 # transformar em uma classe
+from flask import render_template
+from dataclasses import dataclass
 
-def get_ticket_controller():
-    pass
+@dataclass
+class TicketController:
+    @classmethod
+    def render_page(cls):
+        return render_template('tickets_page.jinja')
 
-def add_ticket_controller(req):
-    reqTeste = req.form.get('teste', None)
-    
-    if reqTeste:
-        return f'<h1>Teste: {reqTeste}</h1>'
-    else:
-        return '<p>O campo "teste" não foi enviado no formulário.</p>'
+    @classmethod
+    def add_ticket_controller(cls):
+        pass
 
-def delete_ticket_controller():
-    pass
+    @classmethod
+    def delete_ticket_controller(cls):
+        pass
 
-def put_ticket_controller():
-    pass
+    @classmethod
+    def put_ticket_controller(cls):
+        pass
