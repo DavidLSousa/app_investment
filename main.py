@@ -1,14 +1,17 @@
 from flask import Flask
 
+from model.models import db, Ticket
+
 from router.tickets import tickets_bp
 from router.news import news_bp
 from router.dashboard import dashboard_bp
 
 app = Flask(__name__)
 
-
-# db.connect()
-# db.create_tables([Ticket])
+# DB MySQL
+with app.app_context():
+    db.connect()
+    db.create_tables([Ticket], safe=True)
 
 # Routers
 app.register_blueprint(tickets_bp)
@@ -35,11 +38,13 @@ if __name__ == '__main__':
 # docker stop <container_id>
 # docker rm <container_id>
 
-# docker build -t app_investment . -> Cria a imagem
-# docker run -d -p 5000:5000 app_investment -> sobe o container, pode ser substiruido pelo docker-compose
+# docker build -t app_investment . -------------> Cria a imagem
+# docker run -d -p 5000:5000 app_investment ----> sobe o container, pode ser substiruido pelo docker-compose
 
 # docker-compose up
 # docker-compose down
-# docker-compose up --build -> Reconstroi as imagens quando necessario (atualiza quando modificado)
+# docker-compose up --build --------------------> Reconstroi as imagens quando necessario (atualiza quando modificado)
 
 # docker volume rm
+
+# docker exec -it mysql-db mysql -u root -p ----> abre o mysql do container
