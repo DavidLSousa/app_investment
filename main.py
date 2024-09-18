@@ -1,9 +1,7 @@
 from flask import Flask
-import peewee
-import pymysql
-import time, os
+import os
 
-from models import db, Ticket
+from models import connectDB
 
 from router.main_router import main_page_bp
 from router.tickets_router import tickets_bp
@@ -14,21 +12,7 @@ app = Flask(__name__)
 
 # DB MySQL
 if os.getenv('RUNNING_IN_DOCKER') == 'True':
-    with app.app_context():
-        retry_attempts = 5
-        for attempt in range(retry_attempts):
-            try:
-                pymysql.install_as_MySQLdb()
-
-                db.connect()
-                print("Conectado ao MySQL com sucesso!")
-                db.create_tables([Ticket], safe=True)
-                print("Table Ticket criada com sucesso!")
-                break
-
-            except peewee.OperationalError as e:
-                print(f"Erro ao conectar ao MySQL: {e}")
-                time.sleep(5)  
+    connectDB(app)
 
 # Routers
 app.register_blueprint(main_page_bp)

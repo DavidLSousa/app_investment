@@ -1,6 +1,9 @@
 from peewee import *
 from dotenv import load_dotenv
 import os
+import peewee
+import pymysql
+import time
 
 load_dotenv()
 
@@ -25,3 +28,23 @@ class Ticket(Model):
 
     class Meta:
         database = db
+
+
+
+# Connect MySQL
+def connectDB(app):
+    with app.app_context():
+        retry_attempts = 5
+        for attempt in range(retry_attempts):
+            try:
+                pymysql.install_as_MySQLdb()
+
+                db.connect()
+                print("Conectado ao MySQL com sucesso!")
+                db.create_tables([Ticket], safe=True)
+                print("Table Ticket criada com sucesso!")
+                break
+
+            except peewee.OperationalError as e:
+                print(f"Erro ao conectar ao MySQL: {e}")
+                time.sleep(5)
