@@ -1,34 +1,37 @@
 from flask import Flask
 import peewee
 import pymysql
-import time
+import time, os
 
 from models import db, Ticket
 
-from router.tickets import tickets_bp
-from router.news import news_bp
-from router.dashboard import dashboard_bp
+from router.main_page import main_page_bp
+from router.tickets_page import tickets_bp
+from router.news_page import news_bp
+from router.dashboard_page import dashboard_bp
 
 app = Flask(__name__)
 
 # DB MySQL
-with app.app_context():
-    retry_attempts = 5
-    for attempt in range(retry_attempts):
-        try:
-            pymysql.install_as_MySQLdb()
+if os.getenv('RUNNING_IN_DOCKER') == 'True':
+    with app.app_context():
+        retry_attempts = 5
+        for attempt in range(retry_attempts):
+            try:
+                pymysql.install_as_MySQLdb()
 
-            db.connect()
-            print("Conectado ao MySQL com sucesso!")
-            db.create_tables([Ticket], safe=True)
-            print("Table Ticket criada com sucesso!")
-            break
+                db.connect()
+                print("Conectado ao MySQL com sucesso!")
+                db.create_tables([Ticket], safe=True)
+                print("Table Ticket criada com sucesso!")
+                break
 
-        except peewee.OperationalError as e:
-            print(f"Erro ao conectar ao MySQL: {e}")
-            time.sleep(5)  
+            except peewee.OperationalError as e:
+                print(f"Erro ao conectar ao MySQL: {e}")
+                time.sleep(5)  
 
 # Routers
+app.register_blueprint(main_page_bp)
 app.register_blueprint(tickets_bp)
 app.register_blueprint(news_bp)
 app.register_blueprint(dashboard_bp)

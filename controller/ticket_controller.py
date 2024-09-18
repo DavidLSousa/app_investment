@@ -1,3 +1,4 @@
+# transformar em uma classe
 
 def get_ticket_controller():
     pass
