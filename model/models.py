@@ -1,10 +1,14 @@
 from peewee import *
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 db = MySQLDatabase(
-    'ticketsDB',
-    user='MYSQL_USER',  
-    password='MYSQL_PASSWORD',
-    host='localhost',    
+    os.getenv('MYSQL_DB'),
+    user=os.getenv('MYSQL_USER'),  
+    password=os.getenv('MYSQL_PASSWORD'),
+    host=os.getenv('MYSQL_HOST'),    
     port=3306            
 )
 
@@ -20,6 +24,3 @@ class Ticket(Model):
 
     class Meta:
         database = db
-
-db.connect()
-db.create_tables([Ticket])

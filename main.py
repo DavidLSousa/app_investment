@@ -6,6 +6,10 @@ from router.dashboard import dashboard_bp
 
 app = Flask(__name__)
 
+
+# db.connect()
+# db.create_tables([Ticket])
+
 # Routers
 app.register_blueprint(tickets_bp)
 app.register_blueprint(news_bp)
@@ -36,3 +40,6 @@ if __name__ == '__main__':
 
 # docker-compose up
 # docker-compose down
+# docker-compose up --build -> Reconstroi as imagens quando necessario (atualiza quando modificado)
+
+# docker volume rm
