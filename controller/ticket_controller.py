@@ -6,7 +6,8 @@ from dataclasses import dataclass
 class TicketController:
     @classmethod
     def render_page(cls):
-        return render_template('tickets_page.jinja')
+        # Pegar info do db e passar para renderizar a pagina com os dados dos tickets do db
+        return render_template('tickets_page.html')
 
     @classmethod
     def add_ticket_controller(cls):

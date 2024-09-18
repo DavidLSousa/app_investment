@@ -8,7 +8,6 @@ tickets_bp = Blueprint('tickets', __name__)
 
 @tickets_bp.route('/tickets')
 def get_ticket():
-    # Pegar info do db e passar para renderizar a pagina com os dados dos tickets do db
     return TicketController.render_page()
 
 @tickets_bp.route('/tickets', methods=['POST'])
