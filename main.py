@@ -1,6 +1,9 @@
 from flask import Flask
+import peewee
+import pymysql
+import time
 
-from model.models import db, Ticket
+from models import db, Ticket
 
 from router.tickets import tickets_bp
 from router.news import news_bp
@@ -10,8 +13,20 @@ app = Flask(__name__)
 
 # DB MySQL
 with app.app_context():
-    db.connect()
-    db.create_tables([Ticket], safe=True)
+    retry_attempts = 5
+    for attempt in range(retry_attempts):
+        try:
+            pymysql.install_as_MySQLdb()
+
+            db.connect()
+            print("Conectado ao MySQL com sucesso!")
+            db.create_tables([Ticket], safe=True)
+            print("Table Ticket criada com sucesso!")
+            break
+
+        except peewee.OperationalError as e:
+            print(f"Erro ao conectar ao MySQL: {e}")
+            time.sleep(5)  
 
 # Routers
 app.register_blueprint(tickets_bp)
