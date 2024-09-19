@@ -6,9 +6,13 @@ from controller.ticket_controller import TicketController
 
 tickets_bp = Blueprint('tickets', __name__)
 
-@tickets_bp.route('/tickets')
-def get_ticket():
-    return TicketController.render_page()
+@tickets_bp.route('/tickets/add')
+def render_add_ticket_page():
+    return TicketController.render_add_page()
+
+@tickets_bp.route('/tickets/all')
+def render_all_ticket_page():
+    return TicketController.render_all_page()
 
 @tickets_bp.route('/tickets', methods=['POST'])
 def add_ticket():

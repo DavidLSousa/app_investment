@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Investment</title>
+
+    <!-- Scripts -->
+    <script type="module" src="../static/js/tickets_page.js"></script>
+    
+    <!-- CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+Mono+TC:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../static/css/defaults.css">
+</head>
+<body class="default flex flex-col items-center justify-center min-h-screen p-4">
+    
+    <h2 class="text-2xl font-semibold text-center mb-4 text-white">Adicionar Ticket</h2>
+
+    <form class="bg-white rounded-lg shadow-lg p-6 mb-2 w-full max-w-md md:max-w-[850px]" id="ticketForm">
+
+        <div id="ticketFields" class="flex flex-col mb-2">
+            <div class="ticket-group mb-4 border border-gray-300 p-4 rounded-md">
+                <h3 class="font-extrabold text-gray-700">Ticket 1</h3>
+                <div class="flex flex-col md:flex-row md:space-x-4">
+                    <div class="mt-2 w-full">
+                        <label class="block text-sm font-medium text-gray-700">Nome do Ticket</label>
+                        <input type="text" name="ticketName" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: Concerto">
+                    </div>
+                    <div class="mt-2 w-full">
+                        <label class="block text-sm font-medium text-gray-700">Quantidade</label>
+                        <input type="number" name="quantity" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: 2">
+                    </div>
+                    <div class="mt-2 w-full">
+                        <label class="block text-sm font-medium text-gray-700">Valor Pago</label>
+                        <input type="text" name="value" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: R$ 100,00">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="bg-gradient-to-b from-green-600 to-green-400 hover:from-green-500 hover:to-green-300 text-white font-semibold py-2 px-4 rounded w-full ">
+            Adicionar
+        </button>
+    </form>
+
+    <button type="button" id="addTicket" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded w-full max-w-md mb-4 md:max-w-[850px]">
+        + 1 Ticket
+    </button>
+
+    <script>
+        let ticketCount = 1;
+
+        document.getElementById('addTicket').addEventListener('click', function() {
+            ticketCount++;
+
+            const ticketFields = document.getElementById('ticketFields');
+
+            // Cria um novo grupo de tickets
+            const newGroup = document.createElement('div');
+            newGroup.className = 'ticket-group mb-4 border border-gray-300 p-4 rounded-md';
+
+            newGroup.innerHTML = `
+                <div class="flex justify-between">
+                    <h3 class="font-extrabold text-gray-700">Ticket ${ticketCount}</h3>
+                    <button type="button" class="removeTicket bg-inherit text-red-500 font-semibold py-1 px-3 rounded">
+                        Remover
+                    </button>
+                </div>
+                <div class="flex flex-col md:flex-row md:space-x-4">
+                    <div class="mt-2 w-full">
+                        <label class="block text-sm font-medium text-gray-700">Nome do Ticket</label>
+                        <input type="text" name="ticketName" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: Concerto">
+                    </div>
+                    <div class="mt-2 w-full">
+                        <label class="block text-sm font-medium text-gray-700">Quantidade</label>
+                        <input type="number" name="quantity" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: 2">
+                    </div>
+                    <div class="mt-2 w-full">
+                        <label class="block text-sm font-medium text-gray-700">Valor Pago</label>
+                        <input type="text" name="value" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: R$ 100,00">
+                    </div>
+                </div>
+            `;
+
+
+            ticketFields.appendChild(newGroup);
+
+            // Adiciona o evento de remoção ao botão "Remover"
+            newGroup.querySelector('.removeTicket').addEventListener('click', function() {
+                ticketFields.removeChild(newGroup);
+                updateTicketLabels();
+            });
+        });
+
+        function updateTicketLabels() {
+            const ticketGroups = document.querySelectorAll('.ticket-group');
+            ticketGroups.forEach((group, index) => {
+                group.querySelector('h3').innerText = `Ticket ${index + 1}`;
+            });
+            ticketCount = ticketGroups.length; // Atualiza o contador
+        }
+    </script>
+
+</body>
+</html>
