@@ -3,7 +3,7 @@ from flask import (
     request,
     jsonify
 )
-from src.controller.ticket_controller import TicketController
+from controller.ticket_controller import TicketController
 
 tickets_bp = Blueprint('tickets', __name__)
 

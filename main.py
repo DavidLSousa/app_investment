@@ -3,10 +3,10 @@ import os
 
 from models import connectDB
 
-from router.main_router import main_page_bp
-from router.tickets_router import tickets_bp
-from router.news_router import news_bp
-from router.dashboard_router import dashboard_bp
+from src.router.main_router import main_page_bp
+from src.router.tickets_router import tickets_bp
+from src.router.news_router import news_bp
+from src.router.dashboard_router import dashboard_bp
 
 app = Flask(__name__)
 

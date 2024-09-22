@@ -4,6 +4,15 @@
 
 [ ] Paginas(n a main) devem ter uma seta para voltar pra pag anterior
 
+# JS e Backend
+[ ] all_tickets_page
+    [ ] Btns
+        [ ] Edição
+        [ ] Deleção
+    [ ] Carregar tickets do BD
+[ ] add_tickets_page
+    [ ] Salvar tickets no BD
+
 <!-- 
 MODELS
 
