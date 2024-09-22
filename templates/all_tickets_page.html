@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Investment</title>
 
-    <!-- Scripts -->
-    <script type="module" src="../static/js/all_tickets_page.js"></script>
-    
-    <!-- CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../static/css/defaults.css">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Investment</title>
+
+  <!-- Scripts -->
+  <script type="module" src="../static/js/all_tickets_page.js"></script>
+
+  <!-- CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../static/css/defaults.css">
 </head>
+
 <body class="default">
 
-    <section class="flex justify-center items-center w-full">
-        <div class="flex flex-col">
-            {% for i in range(3) %}
-            <p class="text-white">Teste {{ i }}</p>
-            {% endfor %}
-        </div>
-    </section>
+  <section class="flex justify-center items-center w-full">
+    <div class="flex flex-col">
+      {% for i in range(3) %}
+      <p class="text-white">Teste {{ i }}</p>
+      {% endfor %}
+    </div>
+  </section>
 
 </body>
