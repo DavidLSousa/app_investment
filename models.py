@@ -24,7 +24,6 @@ class Ticket(Model):
   highest_price = FloatField()
   lowest_price = FloatField()
   average_price = FloatField()
-  average_price = FloatField()
   history = TextField(null=True)
 
   class Meta:
