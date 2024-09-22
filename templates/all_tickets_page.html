@@ -12,15 +12,18 @@
 
   {% include 'includes/header.html' %}  
 
-  <section class="bg-white rounded-lg shadow-lg p-6 mb-2 w-full max-w-md md:max-w-[850px]">
+  <section class="bg-white rounded-lg shadow-lg p-6 mb-2 w-full max-w-md md:max-w-[900px]">
 
     <div class="flex flex-col mb-2">
       <div class="ticket-header mb-4 border-b border-gray-300 pb-2">
-        <div class="flex flex-row justify-between font-extrabold text-gray-700">
-          <div class="w-1/4">Ativo</div>
-          <div class="w-1/4 text-center">Preço Médio</div>
-          <div class="w-1/4 text-center">Quantidade</div>
-          <div class="w-1/4 text-right">Valor Investido</div>
+        <div class="flex flex-row items-center">
+          <div class="w-7 mr-4"></div> <!-- Espaço para o botão "..." -->
+          <div class="flex-1 flex flex-row justify-between font-extrabold text-gray-700">
+            <div class="w-1/4">Ativo</div>
+            <div class="w-1/4 text-center">Preço Médio</div>
+            <div class="w-1/4 text-center">Quantidade</div>
+            <div class="w-1/4 text-right">Valor Investido</div>
+          </div>
         </div>
       </div>
       
@@ -29,25 +32,6 @@
           {% include 'includes/ticket.html' %}
         {% endfor %}
       </div>
-
-      <!-- <div id="ticketList" class="flex flex-col space-y-2">
-        <div class="ticket-item flex flex-row justify-between items-center bg-gray-100 p-2 rounded">
-          <div class="w-1/4 flex flex-col">
-            <span class="text-sm text-gray-600"> 
-              <span class="font-semibold">ticket</span> - nameTicket
-            </span>
-          </div>
-          <div class="w-1/4 text-center">
-            <span class="font-semibold">average_price</span>
-          </div>
-          <div class="w-1/4 text-center">
-            <span>num_tickets</span>
-          </div>
-          <div class="w-1/4 text-right">
-            <span class="font-semibold">total</span>
-          </div>
-        </div>
-      </div> -->
 
     </div>    
 
