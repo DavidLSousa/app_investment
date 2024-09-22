@@ -1,26 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>App Investment</title>
-
-  <!-- Scripts -->
-  <script type="module" src="../static/js/add_tickets_page.js"></script>
-
-  <!-- CSS -->
-  <script defer src="https://cdn.tailwindcss.com"></script>
-
-  <link rel="stylesheet" href="../static/css/defaults.css">
-</head>
-
-<body class="default flex flex-col items-center justify-center min-h-screen p-4">
-
-  <h2 class="text-2xl font-semibold text-center mb-4 text-white">Adicionar Ticket</h2>
-
-  <form class="bg-white rounded-lg shadow-lg p-6 mb-2 w-full max-w-md md:max-w-[850px]" id="ticketForm" data-js="ticket-form">
-
+  
+  <head>
+    {% include 'includes/head.html' %}
+    
+    <!-- Scripts -->
+    <script defer type="module" src="../static/js/add_tickets_page.js"></script>
+  </head>
+  
+  
+  <body class="flex flex-col items-center justify-center min-h-screen p-4">
+    
+    {% include 'includes/header.html' %}  
+    
+    <form class="bg-white rounded-lg shadow-lg p-6 mb-2 w-full max-w-md md:max-w-[850px]" id="ticketForm" data-js="ticket-form">
+      
     <div id="ticketFields" data-js="ticket-fields" class="flex flex-col mb-2">
       <div class="ticket-group mb-4 border border-gray-300 p-4 rounded-md">
         <h3 class="font-extrabold text-gray-700">Ticket 1</h3>
