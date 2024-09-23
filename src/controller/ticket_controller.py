@@ -10,17 +10,6 @@ from dataclasses import dataclass
 @dataclass
 class TicketController:
   @classmethod
-  def render_add_page(cls):
-    # Pegar info do db e passar para renderizar a pagina com os dados dos tickets do db
-  
-    try:
-      return render_template('add_tickets_page.html', title_page='Adicionar Ativos')
-    
-    except ValueError as err:
-      print(f'ERROR render_add_page: {err}')
-      return { 'status': 500}
-
-  @classmethod
   def render_all_page(cls):
     test = [
       {
@@ -51,6 +40,17 @@ class TicketController:
     
     except ValueError as err:
       print(f'ERROR render_all_page: {err}')
+      return { 'status': 500}
+  
+  @classmethod
+  def render_add_page(cls):
+    # Pegar info do db e passar para renderizar a pagina com os dados dos tickets do db
+  
+    try:
+      return render_template('add_tickets_page.html', title_page='Adicionar Ativos')
+    
+    except ValueError as err:
+      print(f'ERROR render_add_page: {err}')
       return { 'status': 500}
 
   @classmethod

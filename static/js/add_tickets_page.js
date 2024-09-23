@@ -89,8 +89,7 @@ ticketForm.addEventListener('submit', async event => {
     showPopupRes(data)
 
   } catch (error) {
-    console.error('Erro:', error);
-    // rever isso
+    console.error('Erro:', error); // rever isso
   }
 
 });
