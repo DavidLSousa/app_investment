@@ -6,30 +6,55 @@
 </head>
 
 <body>
-  <header class="w-full max-w-3xl mx-auto flex justify-center items-center py-4 ">
-    <img src="../static/images/icon_preto.png" alt="icone" class="w-36 rounded-full">
+  <header class="w-full max-w-4xl mx-auto flex justify-center items-center py-8">
+    <img src="../static/images/icon_preto.png" alt="icone" class="w-48 rounded-full shadow-lg">
   </header>
 
-  <section class="flex justify-center items-center w-full">
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 w-full max-w-3xl px-4">
-      <a href="/tickets/add"
-        class="text-2xl text-center bg-gradient-to-b from-green-600 to-green-400 text-white font-bold py-6 rounded shadow-lg transform transition duration-300 ease-in-out hover:bg-gradient-to-b hover:from-green-700 hover:to-green-600">
-        Add Ativo
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Bem-vindo ao Gerenciador de Ativos</h1>
+    
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <a href="/tickets/add" class="card bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-green-600 text-white p-4">
+          <h2 class="text-2xl font-semibold">Adicionar Ativo</h2>
+        </div>
+        <div class="p-4">
+          <p class="text-gray-600">Registre um novo ativo no sistema.</p>
+        </div>
       </a>
-      <a href="#"
-        class="text-2xl text-center bg-gradient-to-b from-green-600 to-green-400 text-white font-bold py-6 rounded shadow-lg transform transition duration-300 ease-in-out hover:bg-gradient-to-b hover:from-green-700 hover:to-green-600">
-        Dashboard
+
+      <a href="/tickets/all" class="card bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-purple-600 text-white p-4">
+          <h2 class="text-2xl font-semibold">Gerenciar Ativos</h2>
+        </div>
+        <div class="p-4">
+          <p class="text-gray-600">Visualize e edite os ativos existentes.</p>
+        </div>
       </a>
-      <a href="/tickets/all"
-        class="text-2xl text-center bg-gradient-to-b from-green-600 to-green-400 text-white font-bold py-6 rounded shadow-lg transform transition duration-300 ease-in-out hover:bg-gradient-to-b hover:from-green-700 hover:to-green-600">
-        Gerenciar Ativos
+      
+      <a href="#" class="card bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-blue-600 text-white p-4">
+          <h2 class="text-2xl font-semibold">Dashboard</h2>
+        </div>
+        <div class="p-4">
+          <p class="text-gray-600">Visualize estatísticas e informações gerais.</p>
+        </div>
       </a>
-      <a href="#"
-        class="text-2xl text-center bg-gradient-to-b from-green-600 to-green-400 text-white font-bold py-6 rounded shadow-lg transform transition duration-300 ease-in-out hover:bg-gradient-to-b hover:from-green-700 hover:to-green-600">
-        Notícias
+      
+      <a href="#" class="card bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-red-600 text-white p-4">
+          <h2 class="text-2xl font-semibold">Notícias</h2>
+        </div>
+        <div class="p-4">
+          <p class="text-gray-600">Fique por dentro das últimas atualizações.</p>
+        </div>
       </a>
-    </div>
-  </section>
+    </section>
+  </main>
+
+  <footer class="mt-12 text-center text-gray-600">
+    <p>Developed by David Sousa</p>
+  </footer>
 </body>
 
 </html>
