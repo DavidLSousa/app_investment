@@ -2,8 +2,7 @@
 from nis import cat
 from flask import (
   render_template,
-  request as req,
-  Response as res
+  request as req
   )
 from dataclasses import dataclass
 

@@ -17,18 +17,18 @@ def render_add_ticket_page():
 def add_ticket():
   return TicketController.add_ticket_controller()
 
-
-@tickets_bp.route('/tickets', methods=['DELETE'])
-def delete_ticket():
-  return TicketController.delete_ticket_controller()
-
-
-@tickets_bp.route('/tickets', methods=['PUT'])
-def put_ticket():
-  return TicketController.edit_ticket_controller()
-
 # ============ all_page ============ 
 
 @tickets_bp.route('/tickets/all')
 def render_all_ticket_page():
   return TicketController.render_all_page()
+
+
+@tickets_bp.route('/tickets/all/<ticker>', methods=['DELETE'])
+def delete_ticket(ticker):
+  return TicketController.delete_ticket_controller()
+
+
+@tickets_bp.route('/tickets/all/<ticker>', methods=['PUT'])
+def put_ticket(ticker):
+  return TicketController.edit_ticket_controller()

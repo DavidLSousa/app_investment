@@ -10,6 +10,9 @@
         [ ] Edição
         [ ] Deleção
     [ ] Carregar tickets do BD
+
+    [ ] .js -> rever o que o catch deve fazer;
+
 [ ] add_tickets_page
     [ ] Salvar tickets no BD
 
