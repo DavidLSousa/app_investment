@@ -29,14 +29,14 @@
   <div class="flex-1 flex flex-row justify-between items-center">
     <div class="w-1/4 flex flex-col">
       <span class="text-sm text-gray-600"> 
-        <span class="font-semibold">{{ ticket.ticket }}</span> - {{ ticket.nameTicket }}
+        <span class="font-semibold" data-js="ticker">{{ ticket.ticket }}</span> - <span data-js="ticket-name">{{ ticket.nameTicket }}</span>
       </span>
     </div>
     <div class="w-1/4 text-center">
       <span class="font-semibold">R$ {{ "%.2f"|format(ticket.average_price) }}</span>
     </div>
     <div class="w-1/4 text-center">
-      <span>{{ ticket.number_of_tickets }}</span>
+      <span data-js="number_of_tickets">{{ ticket.number_of_tickets }}</span>
     </div>
     <div class="w-1/4 text-right">
       <span class="font-semibold">R$ {{ "%.2f"|format(ticket.total_value_purchased) }}</span>
