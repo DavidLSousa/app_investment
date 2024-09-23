@@ -65,8 +65,9 @@ class TicketController:
       return { 'status': 500 }
 
   @classmethod
-  def delete_ticket_controller(cls):
+  def delete_ticket_controller(cls, ticker):
     try:
+      print(f'Ticker del:  {ticker}')
 
       return { "status": 200 }
     
@@ -75,9 +76,9 @@ class TicketController:
       return { 'status': 500 }
 
   @classmethod
-  def edit_ticket_controller(cls):
+  def edit_ticket_controller(cls, ticker):
     try:
-      print(f'Req Body:  {req.json}')
+      print(f'Ticker edit:  {ticker}')
 
       return { "status": 200 }
     
