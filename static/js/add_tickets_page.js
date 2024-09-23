@@ -55,13 +55,30 @@ const addTicket = () => {
   newGroup.querySelector('.removeTicket').addEventListener('click', addRemoveBtn);
 }
 
-addTicketButton.addEventListener('click', addTicket);
+const showPopupRes = data => {
+  const createPopup = (status) => {
+    const popup = document.createElement('div');
+    popup.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg';
+    
+    if (status === 200) {
+      popup.classList.add('bg-green-500', 'text-white');
+      popup.textContent = 'Adição bem-sucedida!';
+    } else {
+      popup.classList.add('bg-red-500', 'text-white');
+      popup.textContent = 'Erro na adição.';
+    }
+  
+    return popup
+  }
 
-// Form
-ticketForm.addEventListener('submit', async event => {
-  event.preventDefault();
+  const popup = createPopup(data.status)
 
-  const ticketGroups = Array.from(ticketFields.querySelectorAll('.ticket-group'));
+  document.body.appendChild(popup);
+
+  setTimeout(() => { popup.remove(); }, 3000);
+}
+
+const buildJson = ticketGroups => {
 
   const tickets = ticketGroups.map(group => {
     return  {
@@ -71,7 +88,14 @@ ticketForm.addEventListener('submit', async event => {
     };
   });
 
-  const jsonData = JSON.stringify(tickets);
+  return JSON.stringify(tickets);
+}
+
+const handleSubmitForm = async event => {
+  event.preventDefault();
+
+  const ticketGroups = Array.from(ticketFields.querySelectorAll('.ticket-group'));
+  const jsonData = buildJson(ticketGroups)
   
   try {
     const res = await fetch('/tickets/add', {
@@ -92,26 +116,8 @@ ticketForm.addEventListener('submit', async event => {
     console.error('Erro:', error); // rever isso
   }
 
-});
-
-const createPopup = (status) => {
-  const popup = document.createElement('div');
-  popup.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg';
-  
-  if (status === 200) {
-    popup.classList.add('bg-green-500', 'text-white');
-    popup.textContent = 'Adição bem-sucedida!';
-  } else {
-    popup.classList.add('bg-red-500', 'text-white');
-    popup.textContent = 'Erro na adição.';
-  }
-
-  return popup
 }
-const showPopupRes = data => {
-  const popup = createPopup(data.status)
 
-  document.body.appendChild(popup);
-
-  setTimeout(() => { popup.remove(); }, 3000);
-}
+// Listeners
+addTicketButton.addEventListener('click', addTicket);
+ticketForm.addEventListener('submit', handleSubmitForm);
