@@ -66,8 +66,21 @@ class TicketController:
 
   @classmethod
   def delete_ticket_controller(cls):
-    pass
+    try:
+
+      return { "status": 200 }
+    
+    except ValueError as err:
+      print(f'ERROR delete_ticket_controller: {err}')
+      return { 'status': 500 }
 
   @classmethod
-  def put_ticket_controller(cls):
-    pass
+  def edit_ticket_controller(cls):
+    try:
+      print(f'Req Body:  {req.json}')
+
+      return { "status": 200 }
+    
+    except ValueError as err:
+      print(f'ERROR edit_ticket_controller: {err}')
+      return { 'status': 500 }
