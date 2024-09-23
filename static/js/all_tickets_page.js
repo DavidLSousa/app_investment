@@ -1,4 +1,3 @@
-// Função para criar o elemento de popup com base no tipo (edição ou exclusão)
 const createPopupElement = (type, message, currentValue = '') => {
   const isDelete = type === 'delete';
   const popupHTML = `
@@ -19,7 +18,6 @@ const createPopupElement = (type, message, currentValue = '') => {
   return wrapper;
 };
 
-// Função para criar e gerenciar o popup
 const createPopup = (type, message, currentValue = '') => {
   return new Promise((resolve) => {
     const popup = createPopupElement(type, message, currentValue);
@@ -45,27 +43,24 @@ const createPopup = (type, message, currentValue = '') => {
         updatePopup: (message, success = true) => {
           const isEdit = type === 'edit'; // Verifica se a operação é de edição
 
-          // Atualiza a mensagem e o estilo do popup após uma ação
           popup.innerHTML = `
             <div class="bg-${isEdit && success ? 'green-500' : !isEdit && success ? 'red-500' : 'red-500'} p-6 rounded-lg shadow-xl max-w-sm w-full flex items-center justify-center" style="min-height: 150px;">
               <p class="text-white text-xl font-bold">${message}</p>
             </div>
           `;
 
-          // Mantém o tamanho e estilo do popup centralizado
           popup.className = 'fixed inset-0 flex items-center justify-center z-50';
 
           setTimeout(() => {
             closePopup();
             if (success) location.reload();
-          }, 2000); // Tempo de exibição reduzido para 2 segundos
+          }, 2000);
         }
       });
     });
   });
 };
 
-// Função para lidar com requisições da API
 const handleApiRequest = async (apiCall, successMessage, errorMessage) => {
   try {
     const result = await apiCall();
@@ -80,7 +75,6 @@ const handleApiRequest = async (apiCall, successMessage, errorMessage) => {
   }
 };
 
-// Função para editar ticket
 const editTicket = async (tickerSymbol, newQuantity) => {
   const response = await fetch(`/tickets/all/${tickerSymbol}`, {
     method: 'PUT',
@@ -93,7 +87,6 @@ const editTicket = async (tickerSymbol, newQuantity) => {
   return { success: true, data };
 };
 
-// Função para deletar ticket
 const deleteTicket = async (tickerSymbol) => {
   const response = await fetch(`/tickets/all/${tickerSymbol}`, { method: 'DELETE' });
   if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
