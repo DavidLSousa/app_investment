@@ -1,5 +1,10 @@
 # transformar em uma classe
-from flask import render_template
+from nis import cat
+from flask import (
+  render_template,
+  request as req,
+  Response as res
+  )
 from dataclasses import dataclass
 
 @dataclass
@@ -7,7 +12,13 @@ class TicketController:
   @classmethod
   def render_add_page(cls):
     # Pegar info do db e passar para renderizar a pagina com os dados dos tickets do db
-    return render_template('add_tickets_page.html', title_page='Adicionar Ativos')
+  
+    try:
+      return render_template('add_tickets_page.html', title_page='Adicionar Ativos')
+    
+    except ValueError as err:
+      print(f'ERROR render_add_page: {err}')
+      return { 'status': 500}
 
   @classmethod
   def render_all_page(cls):
@@ -35,11 +46,23 @@ class TicketController:
       }
     ]
 
-    return render_template('all_tickets_page.html', title_page='Meus Ativos', tickets=test)
+    try:
+      return render_template('all_tickets_page.html', title_page='Meus Ativos', tickets=test)
+    
+    except ValueError as err:
+      print(f'ERROR render_all_page: {err}')
+      return { 'status': 500}
 
   @classmethod
   def add_ticket_controller(cls):
-    pass
+    try:
+      print(f'Req Body:  {req.json}')
+
+      return { "status": 200 }
+    
+    except ValueError as err:
+      print(f'ERROR add_ticket_controller: {err}')
+      return { 'status': 500 }
 
   @classmethod
   def delete_ticket_controller(cls):

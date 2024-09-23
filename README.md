@@ -13,6 +13,13 @@
 [ ] add_tickets_page
     [ ] Salvar tickets no BD
 
+    [ ] Field Ticker busca se o Ticker é valido
+    [ ] Field quantidade e valor nao podem ser negativos
+
+    [ ] Se o ticker ja existir no BD, deve add o novo valor ao valor existente
+
+    [ ] .js -> rever o que o catch deve fazer;
+
 <!-- 
 MODELS
 

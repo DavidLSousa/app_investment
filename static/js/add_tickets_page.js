@@ -58,7 +58,61 @@ const addTicket = () => {
 addTicketButton.addEventListener('click', addTicket);
 
 // Form
-ticketForm.addEventListener('submit', event => {
+ticketForm.addEventListener('submit', async event => {
   event.preventDefault();
-  // Lógica para lidar com o envio do formulário
+
+  const ticketGroups = Array.from(ticketFields.querySelectorAll('.ticket-group'));
+
+  const tickets = ticketGroups.map(group => {
+    return  {
+      ticketName: group.querySelector('input[name="ticketName"]').value,
+      quantity: parseInt(group.querySelector('input[name="quantity"]').value),
+      value: group.querySelector('input[name="value"]').value
+    };
+  });
+
+  const jsonData = JSON.stringify(tickets);
+  
+  try {
+    const res = await fetch('/tickets/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonData
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+    const data = await res.json();
+    
+    showPopupRes(data)
+
+  } catch (error) {
+    console.error('Erro:', error);
+    // rever isso
+  }
+
 });
+
+const createPopup = (status) => {
+  const popup = document.createElement('div');
+  popup.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg';
+  
+  if (status === 200) {
+    popup.classList.add('bg-green-500', 'text-white');
+    popup.textContent = 'Adição bem-sucedida!';
+  } else {
+    popup.classList.add('bg-red-500', 'text-white');
+    popup.textContent = 'Erro na adição.';
+  }
+
+  return popup
+}
+const showPopupRes = data => {
+  const popup = createPopup(data.status)
+
+  document.body.appendChild(popup);
+
+  setTimeout(() => { popup.remove(); }, 3000);
+}
