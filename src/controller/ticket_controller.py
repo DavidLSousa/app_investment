@@ -2,9 +2,6 @@
 from flask import render_template
 from dataclasses import dataclass
 
-from models import Ticket
-
-
 @dataclass
 class TicketController:
   @classmethod

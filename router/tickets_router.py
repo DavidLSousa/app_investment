@@ -1,9 +1,10 @@
+import imp
 from flask import (
     Blueprint,
     request,
     jsonify
 )
-from controller.ticket_controller import TicketController
+from src.controller.ticket_controller import TicketController
 
 tickets_bp = Blueprint('tickets', __name__)
 
