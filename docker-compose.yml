@@ -1,18 +1,6 @@
 version: '3.8'
 
 services:
-  web:
-    image: app_investment
-    ports:
-      - "5000:5000"
-    environment:
-      MYSQL_HOST: ${MYSQL_HOST}
-      MYSQL_USER: ${MYSQL_USER}  
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}  
-      MYSQL_DB: ${MYSQL_DATABASE}  
-    depends_on:
-      - db
-  
   db:
     image: mysql:8.0
     container_name: app_investment_mysql-db
@@ -25,6 +13,19 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-
+  
+  web:
+    build: .
+    image: app_investment
+    ports:
+      - "5000:5000"
+    environment:
+      MYSQL_HOST: 172.18.0.2
+      MYSQL_USER: ${MYSQL_USER}  
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}  
+      MYSQL_DB: ${MYSQL_DATABASE}  
+    depends_on:
+      - db
+  
 volumes:
   mysql_data:

@@ -1,4 +1,11 @@
-from peewee import *
+from peewee import (
+  MySQLDatabase,
+  Model, 
+  CharField, 
+  IntegerField, 
+  FloatField,
+  TextField
+  )
 from dotenv import load_dotenv
 import os
 import peewee
@@ -11,7 +18,7 @@ db = MySQLDatabase(
   os.getenv('MYSQL_DATABASE'),
   user=os.getenv('MYSQL_USER'),
   password=os.getenv('MYSQL_PASSWORD'),
-  host=os.getenv('MYSQL_HOST'),
+  host='172.18.0.2',
   port=3306
 )
 
