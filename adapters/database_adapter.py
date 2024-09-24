@@ -1,13 +1,12 @@
 from dataclasses import dataclass
 
-from domain.entities.ticket_entity import TicketEntity
-from domain.services.ticket_services import TicketServices
+from src.domain.entities.ticket_entity import TicketEntity
+from src.domain.services.mysql_services import MysqlServices
 from src.domain.interfaces.ticket_interface import TicketInterface
 
 @dataclass
 class DatabaseAdapter(TicketInterface):
-  def __init__(self, database: TicketServices):
-    self.database = database
+  database: MysqlServices
 
   def get_ticket(self, ticket_id: int):
     return self.database.get_ticket(ticket_id)

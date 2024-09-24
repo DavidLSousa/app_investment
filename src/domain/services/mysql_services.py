@@ -5,9 +5,7 @@ from src.domain.interfaces.ticket_interface import TicketInterface
 from models import Ticket
 
 @dataclass
-class TicketServices(TicketInterface):
-  database: Ticket
-  
+class MysqlServices(TicketInterface):
   def get_ticket(self, ticket_id: int):
     pass
   

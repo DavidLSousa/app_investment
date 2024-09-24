@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any, Dict, List
 
 @dataclass
 class TicketEntity:
@@ -9,7 +10,7 @@ class TicketEntity:
   _highest_price: float
   _lowest_price: float
   _average_price: float
-  _history: list[dict]
+  _history: List[Dict[str, Any]]
 
   @property
   def number_of_tickets(self):

@@ -82,9 +82,9 @@ const buildJson = ticketGroups => {
 
   const tickets = ticketGroups.map(group => {
     return  {
-      ticketName: group.querySelector('input[name="ticketName"]').value,
-      quantity: parseInt(group.querySelector('input[name="quantity"]').value),
-      value: group.querySelector('input[name="value"]').value
+      ticket: group.querySelector('input[name="ticketName"]').value,
+      number_of_tickets: parseInt(group.querySelector('input[name="quantity"]').value),
+      total_value_purchased: group.querySelector('input[name="value"]').value
     };
   });
 
