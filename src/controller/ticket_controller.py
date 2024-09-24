@@ -94,8 +94,7 @@ class TicketController:
         ]
       )
 
-      MySQLDatabase = MysqlServices()
-      database_adapter = DatabaseAdapter(MySQLDatabase)
+      database_adapter = DatabaseAdapter(database=MysqlServices())
       database_adapter.create_ticket(cls.ticket)
 
       # OK Verificar como resolver: '"get" não é um atributo conhecido de "None"'
