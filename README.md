@@ -1,14 +1,11 @@
 # Template
-[ ] render with jinja
-[ ] usar include para reutilizar componentes
-
 [ ] Paginas(n a main) devem ter uma seta para voltar pra pag anterior
 
 # JS e Backend
 [ ] all_tickets_page
-    [ ] Btns
-        [ ] Edição
-        [ ] Deleção
+    [x] Btns
+        [x] Edição
+        [x] Deleção
     [ ] Carregar tickets do BD
 
     [ ] Editar -> Deve ser apenas para venda de ativos?
