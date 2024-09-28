@@ -6,7 +6,7 @@ from models import Ticket
 
 @dataclass
 class MysqlServices(TicketInterface):
-  def get_ticket(self, ticket_id: int):
+  def get_ticket(self, ticket_name: str):
     pass
   
   def get_all_ticket(self):

@@ -4,7 +4,7 @@ from src.domain.entities.ticket_entity import TicketEntity
 
 class TicketInterface(ABC):
   @abstractmethod
-  def get_ticket(self, ticket_id: int):
+  def get_ticket(self, ticket_name: str):
     pass
 
   @abstractmethod
