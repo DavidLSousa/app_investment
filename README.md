@@ -3,9 +3,6 @@
 
 # JS e Backend
 [ ] all_tickets_page
-    [x] Btns
-        [x] Edição
-        [x] Deleção
     [ ] Carregar tickets do BD
 
     [ ] Editar -> Deve ser apenas para venda de ativos?
@@ -15,32 +12,18 @@
     [ ] .js -> rever o que o catch deve fazer;
 
 [ ] add_tickets_page
-    [ ] Salvar tickets no BD
-
-    [ ] Deve ser para add um ativo novo OU uma nova compra de um ativo que ja existe
-        # Se o ativo ja existe, ele deve ser atualizado
-            [ ] incrementar a quantidade de ativos
-            [ ] atualizar o valor total investido
-            [ ] atualizar o valor mais alto
-            [ ] atualizar o valor mais baixo
-            [ ] atualizar o valor medio
-            [ ] adicionar a nova compra ao historico
-
-    [ ] Field Ticker busca se o Ticker é valido
-        # Se não for valido, exibir mensagem de erro
-        # Não permitir o envio da requisição
     [ ] Field quantidade e valor nao podem ser negativos
-
-    [ ] Se o ticker ja existir no BD, deve add o novo valor ao valor existente
 
     [ ] .js -> rever o que o catch deve fazer;
 
-<!-- 
-MODELS
-
-history:
-  Deve ter: 
-  - a data da compra, 
-  - a quantidade de foi comprada nessa data e 
-  - o valor pelo qual foi comprado
- -->
+[ ] Ajustar retorno das mensagens
+    # Sucesso
+        [ ] informar oq foi feito
+            # EX: { 'status'= 200, 'message'=<MGS> }
+            MGS = f'Ticker {ticket} adicionado!'
+            MGS = f'Ticker {ticket} atualizado!'
+    # Erro
+        [ ] informar oq deu errado
+            # EX: { 'status'= 500, 'message'=<MGS> }
+            MGS = f'Erro ao add o {ticket}!'
+            MGS = f'Erro ao atualizar o {ticket}!'
