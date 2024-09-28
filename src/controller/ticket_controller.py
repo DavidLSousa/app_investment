@@ -74,31 +74,15 @@ class TicketController:
 
       for current_ticket in req.json:
         check_ticket_in_db = cls.database_adapter.get_ticket(current_ticket['ticket']) # get_ticket recebe um int no adapter
-
-        current_app.logger.info(f'check_ticket_in_db: {check_ticket_in_db}')
         
-        if check_ticket_in_db:
-          cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
-        else:
+        if check_ticket_in_db is None:
           cls.__handle_create_ticket(current_ticket)
-
-      # OK Verificar como resolver: '"get" não é um atributo conhecido de "None"'
-
-      # Precisa verificar se ja existe do DB, se existir, atualizar, se não existir, criar;
-        # Qual a forma certa de implementar isso?
-
-      # Implementar funções para calcular o preço médio, o preço mais alto e o preço mais baixo
-        # Onde deve ser implementado? Entitie(por fazer parte do ticket) ou Controller(Pq o entitie nao tem essa função)?
-      # Implementar função para adicionar o ticket no histórico
-        # Creio que seja do um append no historico que ja existe, e se nao eciste cria um novo;
-      # Buscar API para retornar o nome do ticker
-      # O history deve ser uma lista de dicionários que tem:
-        # Quantidade de tickets comprados
-        # Valor pago por ticket
-        # Data da compra
-      # o req.json é uma lista de dicionários, logo e preciso iterar a criar um ticket para cada item da lista
+        else:
+          cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
 
       return { "status": 200 }
+    
+    # Falta testar a iteração ao add mais de um ticket por vez;
     
     except Exception as err:
       current_app.logger.error(f'ERRO add_ticket_controller: {err.args}')
@@ -136,14 +120,16 @@ class TicketController:
     number_of_tickets = int(current_ticket['number_of_tickets'])
     total_value_purchased = float(current_ticket['total_value_purchased'])
       
+    price_metrics = cls.__get_price_metrics(current_ticket)
+
     cls.ticket = TicketEntity(
       _nameTicket=            cls.__get_ticket_name_api(current_ticket),
       _ticket=                ticket,
       _number_of_tickets=     number_of_tickets,
       _total_value_purchased= total_value_purchased,
-      _highest_price=         cls.__get_price_metrics(current_ticket)['highest_price'],
-      _lowest_price=          cls.__get_price_metrics(current_ticket)['lowest_price'],
-      _average_price=         cls.__get_price_metrics(current_ticket)['average_price'],
+      _highest_price=         price_metrics['highest_price'],
+      _lowest_price=          price_metrics['lowest_price'],
+      _average_price=         price_metrics['average_price'],
       _history=[
         {
           'qntTickets': number_of_tickets,
@@ -157,33 +143,27 @@ class TicketController:
   
   @classmethod
   def __handle_update_ticket(cls, new_ticket, db_ticket):
-    # Se esta aqui é pq ja foi achado no banco de dados
-    # check_ticket_in_db é o que foi obtido no BD
-    # atualizar o check_ticket_in_db com os novos dados do current_ticket
-      # add ao histico os dados do current_ticket
-        # append no historico
-      # atualizar o preço médio, o preço mais alto e o preço mais baixo
-      #  atualizar o valor total investido
-    # salvar no BD o ticket atualizado
-
     new_number_of_tickets = int(db_ticket['number_of_tickets']) + int(new_ticket['number_of_tickets'])
     new_total_value_purchased = float(db_ticket['total_value_purchased']) + float(new_ticket['total_value_purchased'])
-    
+    current_history = eval(db_ticket['history']) 
+
+    price_metrics = cls.__get_price_metrics(new_ticket, db_ticket)
+
     updated_ticket = TicketEntity(
       _nameTicket=            db_ticket['nameTicket'],
       _ticket=                db_ticket['ticket'],
       _number_of_tickets=     new_number_of_tickets,
       _total_value_purchased= new_total_value_purchased,
-      _highest_price=         cls.__get_price_metrics(new_ticket)['highest_price'],
-      _lowest_price=          cls.__get_price_metrics(new_ticket)['lowest_price'],
-      _average_price=         cls.__get_price_metrics(new_ticket)['average_price'],
-      _history=               db_ticket.history.append(
+      _highest_price=         price_metrics['highest_price'],
+      _lowest_price=          price_metrics['lowest_price'],
+      _average_price=         price_metrics['average_price'],
+      _history=               current_history + [
         {
           'qntTickets': new_ticket['number_of_tickets'],
-          'valuePerTicket': new_ticket['total_value_purchased'] / new_ticket['number_of_tickets'],
+          'valuePerTicket': float(new_ticket['total_value_purchased']) / int(new_ticket['number_of_tickets']),
           'date': datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         }
-      )
+      ]
     )
 
     current_app.logger.info(f'updated_ticket: {updated_ticket}')
@@ -204,27 +184,25 @@ class TicketController:
   def __get_price_metrics(cls, new_ticket, db_ticket=None):
     new_total_value_purchased = float(new_ticket['total_value_purchased'])
     new_number_of_tickets = float(new_ticket['number_of_tickets'])
+    new_price = new_total_value_purchased / new_number_of_tickets
 
-    if not db_ticket:
-      first_metric = new_total_value_purchased / new_number_of_tickets
-      return {
-        'average_price': first_metric,
-        'highest_price': first_metric,
-        'lowest_price': first_metric
-      }
+    if db_ticket is None:
+        return {
+            'average_price': new_price,
+            'highest_price': new_price,
+            'lowest_price': new_price
+        }
     
     total_tickets = db_ticket['number_of_tickets'] + new_number_of_tickets
     total_value_purchased = db_ticket['total_value_purchased'] + new_total_value_purchased
     
     new_average_price = total_value_purchased / total_tickets
     
-    new_price = new_total_value_purchased / new_number_of_tickets
-    
     highest_price = max(db_ticket['highest_price'], new_price)
     lowest_price = min(db_ticket['lowest_price'], new_price)
 
     return {
-      'average_price': new_average_price,
-      'highest_price': highest_price,
-      'lowest_price': lowest_price
+        'average_price': new_average_price,
+        'highest_price': highest_price,
+        'lowest_price': lowest_price
     }
