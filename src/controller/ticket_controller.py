@@ -1,4 +1,4 @@
-# transformar em uma classe
+import yfinance as yf
 import datetime 
 from nis import cat
 import traceback
@@ -19,6 +19,8 @@ from src.domain.entities.ticket_entity import TicketEntity
 class TicketController:
   MySQLDatabase: TicketInterface
   ticket: TicketEntity
+
+  database_adapter = DatabaseAdapter(database=MysqlServices())
 
   @classmethod
   def render_all_page(cls):
@@ -70,32 +72,13 @@ class TicketController:
       if not req.json:
         raise ValueError("Dados JSON não fornecidos")
 
-      ticket = str(req.json[0]['ticket'])
-      number_of_tickets = int(req.json[0]['number_of_tickets'])
-      total_value_purchased = float(req.json[0]['total_value_purchased'])
+      for current_ticket in req.json:
+        check_ticket_in_db = cls.database_adapter.get_ticket(current_ticket['ticket']) # get_ticket recebe um int no adapter
 
-      if not all([ticket, number_of_tickets, total_value_purchased]):
-        raise ValueError("Dados incompletos fornecidos")
-
-      cls.ticket = TicketEntity(
-        _nameTicket='',
-        _ticket=ticket,
-        _number_of_tickets=number_of_tickets,
-        _total_value_purchased=total_value_purchased,
-        _highest_price=0,
-        _lowest_price=0,
-        _average_price=0,
-        _history=[
-          {
-            'qntTickets': int(number_of_tickets),
-            'valuePerTicket': float(total_value_purchased / number_of_tickets),
-            'date': datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-          }
-        ]
-      )
-
-      database_adapter = DatabaseAdapter(database=MysqlServices())
-      database_adapter.create_ticket(cls.ticket)
+        if check_ticket_in_db:
+          cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
+        else:
+          cls.__handle_create_ticket(current_ticket)
 
       # OK Verificar como resolver: '"get" não é um atributo conhecido de "None"'
 
@@ -135,6 +118,7 @@ class TicketController:
   @classmethod
   def edit_ticket_controller(cls, ticker):
     try:
+      # Não implementar até ajustar o front
       print(f'Ticker edit:  {ticker}')
 
       return { "status": 200 }
@@ -142,3 +126,77 @@ class TicketController:
     except ValueError as err:
       print(f'ERROR edit_ticket_controller: {err}')
       return { 'status': 500 }
+
+  # =========================== Private methods =========================== #
+  @classmethod
+  def __handle_create_ticket(cls, current_ticket):
+    ticket = str(current_ticket['ticket'])
+    number_of_tickets = int(current_ticket['number_of_tickets'])
+    total_value_purchased = float(current_ticket['total_value_purchased'])
+      
+    cls.ticket = TicketEntity(
+      _nameTicket=            cls.__get_ticket_name_api(current_ticket),
+      _ticket=                ticket,
+      _number_of_tickets=     number_of_tickets,
+      _total_value_purchased= total_value_purchased,
+      _highest_price=         cls.__get_price_metrics(current_ticket)['highest_price'],
+      _lowest_price=          cls.__get_price_metrics(current_ticket)['lowest_price'],
+      _average_price=         cls.__get_price_metrics(current_ticket)['average_price'],
+      _history=[
+        {
+          'qntTickets': number_of_tickets,
+          'valuePerTicket': total_value_purchased / number_of_tickets,
+          'date': datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        }
+      ]
+    )
+
+    cls.database_adapter.create_ticket(cls.ticket)
+  
+  @classmethod
+  def __handle_update_ticket(cls, new_ticket, db_ticket):
+    # Se esta aqui é pq ja foi achado no banco de dados
+    # check_ticket_in_db é o que foi obtido no BD
+    # atualizar o check_ticket_in_db com os novos dados do current_ticket
+      # add ao histico os dados do current_ticket
+        # append no historico
+      # atualizar o preço médio, o preço mais alto e o preço mais baixo
+      #  atualizar o valor total investido
+    # salvar no BD o ticket atualizado
+    cls.database_adapter.update_ticket(new_ticket.id, new_ticket)
+  
+  @classmethod
+  def __get_ticket_name_api(cls, current_ticket) -> str:    
+    ticker = yf.Ticker(current_ticket['ticket'])
+    ticketName = ticker.info.get('longName')
+
+    if ticketName == None:
+      raise ValueError('Ticket não encontrado')
+
+    return ticketName
+  
+  @classmethod
+  def __get_price_metrics(cls, new_ticket, db_ticket=None):
+    if not db_ticket:
+        first_metric = new_ticket['total_value_purchased'] / new_ticket['number_of_tickets']
+        return {
+          'average_price': first_metric,
+          'highest_price': first_metric,
+          'lowest_price': first_metric
+        }
+    
+    total_tickets = db_ticket['number_of_tickets'] + new_ticket['number_of_tickets']
+    total_value = db_ticket['total_value_purchased'] + new_ticket['total_value_purchased']
+    
+    new_average_price = total_value / total_tickets
+    
+    new_price = new_ticket['total_value_purchased'] / new_ticket['number_of_tickets']
+    
+    highest_price = max(db_ticket['highest_price'], new_price)
+    lowest_price = min(db_ticket['lowest_price'], new_price)
+
+    return {
+      'average_price': new_average_price,
+      'highest_price': highest_price,
+      'lowest_price': lowest_price
+    }
