@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from flask import current_app
+
 from src.domain.entities.ticket_entity import TicketEntity
 from src.domain.interfaces.ticket_interface import TicketInterface
 from models import Ticket
@@ -7,7 +9,15 @@ from models import Ticket
 @dataclass
 class MysqlServices(TicketInterface):
   def get_ticket(self, ticket_name: str):
-    return Ticket.get(Ticket.ticket == ticket_name)
+    try:
+      query = Ticket.select().where(Ticket.ticket == ticket_name)
+      ticket = query.dicts().get()
+      
+      return ticket
+    
+    except Exception as err:
+      return None
+      
   
   def get_all_ticket(self):
     pass
