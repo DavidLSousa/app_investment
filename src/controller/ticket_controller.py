@@ -177,20 +177,23 @@ class TicketController:
   
   @classmethod
   def __get_price_metrics(cls, new_ticket, db_ticket=None):
+    new_total_value_purchased = float(new_ticket['total_value_purchased'])
+    new_number_of_tickets = float(new_ticket['number_of_tickets'])
+
     if not db_ticket:
-        first_metric = new_ticket['total_value_purchased'] / new_ticket['number_of_tickets']
-        return {
-          'average_price': first_metric,
-          'highest_price': first_metric,
-          'lowest_price': first_metric
-        }
+      first_metric = new_total_value_purchased / new_number_of_tickets
+      return {
+        'average_price': first_metric,
+        'highest_price': first_metric,
+        'lowest_price': first_metric
+      }
     
-    total_tickets = db_ticket['number_of_tickets'] + new_ticket['number_of_tickets']
-    total_value = db_ticket['total_value_purchased'] + new_ticket['total_value_purchased']
+    total_tickets = db_ticket['number_of_tickets'] + new_number_of_tickets
+    total_value_purchased = db_ticket['total_value_purchased'] + new_total_value_purchased
     
-    new_average_price = total_value / total_tickets
+    new_average_price = total_value_purchased / total_tickets
     
-    new_price = new_ticket['total_value_purchased'] / new_ticket['number_of_tickets']
+    new_price = new_total_value_purchased / new_number_of_tickets
     
     highest_price = max(db_ticket['highest_price'], new_price)
     lowest_price = min(db_ticket['lowest_price'], new_price)
