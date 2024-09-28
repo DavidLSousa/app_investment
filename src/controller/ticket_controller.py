@@ -75,6 +75,8 @@ class TicketController:
       for current_ticket in req.json:
         check_ticket_in_db = cls.database_adapter.get_ticket(current_ticket['ticket']) # get_ticket recebe um int no adapter
 
+        current_app.logger.info(f'check_ticket_in_db: {check_ticket_in_db}')
+        
         if check_ticket_in_db:
           cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
         else:
@@ -163,7 +165,30 @@ class TicketController:
       # atualizar o preço médio, o preço mais alto e o preço mais baixo
       #  atualizar o valor total investido
     # salvar no BD o ticket atualizado
-    cls.database_adapter.update_ticket(new_ticket.id, new_ticket)
+
+    new_number_of_tickets = int(db_ticket['number_of_tickets']) + int(new_ticket['number_of_tickets'])
+    new_total_value_purchased = float(db_ticket['total_value_purchased']) + float(new_ticket['total_value_purchased'])
+    
+    updated_ticket = TicketEntity(
+      _nameTicket=            db_ticket['nameTicket'],
+      _ticket=                db_ticket['ticket'],
+      _number_of_tickets=     new_number_of_tickets,
+      _total_value_purchased= new_total_value_purchased,
+      _highest_price=         cls.__get_price_metrics(new_ticket)['highest_price'],
+      _lowest_price=          cls.__get_price_metrics(new_ticket)['lowest_price'],
+      _average_price=         cls.__get_price_metrics(new_ticket)['average_price'],
+      _history=               db_ticket.history.append(
+        {
+          'qntTickets': new_ticket['number_of_tickets'],
+          'valuePerTicket': new_ticket['total_value_purchased'] / new_ticket['number_of_tickets'],
+          'date': datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        }
+      )
+    )
+
+    current_app.logger.info(f'updated_ticket: {updated_ticket}')
+
+    cls.database_adapter.update_ticket_increment(updated_ticket)
   
   @classmethod
   def __get_ticket_name_api(cls, current_ticket) -> str:    
