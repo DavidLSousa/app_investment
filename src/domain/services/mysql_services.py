@@ -13,7 +13,7 @@ class MysqlServices(TicketInterface):
     pass
 
   def create_ticket(self, ticket: TicketEntity):
-    ticket = Ticket.create(
+    Ticket.create(
       nameTicket = ticket._nameTicket,
       ticket = ticket._ticket,
       number_of_tickets = ticket._number_of_tickets,
@@ -26,6 +26,18 @@ class MysqlServices(TicketInterface):
   
   def update_ticket(self, ticket_id: int, ticket: TicketEntity):
     pass
+  
+  def update_ticket_increment(self, ticket: TicketEntity):
+    Ticket.update(
+      number_of_tickets = ticket._number_of_tickets,
+      total_value_purchased = ticket._total_value_purchased,
+      highest_price = ticket._highest_price,
+      lowest_price = ticket._lowest_price,
+      average_price = ticket._average_price,
+      history = ticket._history
+    ).where(
+      Ticket.ticket == ticket._ticket
+      ).execute()
   
   def delete_ticket(self, ticket_id: int):
     pass
