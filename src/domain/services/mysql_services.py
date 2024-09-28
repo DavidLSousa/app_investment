@@ -18,7 +18,6 @@ class MysqlServices(TicketInterface):
     except Exception as err:
       return None
       
-  
   def get_all_ticket(self):
     pass
 
