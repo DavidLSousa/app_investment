@@ -85,7 +85,6 @@ class TicketController:
     # Falta testar a iteração ao add mais de um ticket por vez;
     
     except Exception as err:
-      current_app.logger.error(f'ERRO add_ticket_controller: {err.args}')
       stack_trace = traceback.format_exc()
       current_app.logger.error(f'ERRO add_ticket_controller: {stack_trace}')
       return {'status': 500, 'error': 'Erro interno do servidor'}
