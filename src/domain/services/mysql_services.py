@@ -7,7 +7,7 @@ from models import Ticket
 @dataclass
 class MysqlServices(TicketInterface):
   def get_ticket(self, ticket_name: str):
-    pass
+    return Ticket.get(Ticket.ticket == ticket_name)
   
   def get_all_ticket(self):
     pass
