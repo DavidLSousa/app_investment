@@ -1,25 +1,19 @@
 import yfinance as yf
 import datetime 
-from nis import cat
 import traceback
 from flask import (
   current_app,
   render_template,
-  request as req,
-  Response as res
+  request as req
   )
 from dataclasses import dataclass
 
 from adapters.database_adapter import DatabaseAdapter
-from src.domain.interfaces.ticket_interface import TicketInterface
 from src.domain.services.mysql_services import MysqlServices
 from src.domain.entities.ticket_entity import TicketEntity
 
 @dataclass
 class TicketController:
-  MySQLDatabase: TicketInterface
-  ticket: TicketEntity
-
   database_adapter = DatabaseAdapter(database=MysqlServices())
 
   @classmethod
@@ -112,16 +106,16 @@ class TicketController:
       print(f'ERROR edit_ticket_controller: {err}')
       return { 'status': 500 }
 
-  # =========================== Private methods =========================== #
+  # ============================ Private methods ============================ #
   @classmethod
-  def __handle_create_ticket(cls, current_ticket):
+  def __handle_create_ticket(cls, current_ticket) -> None:
     ticket = str(current_ticket['ticket'])
     number_of_tickets = int(current_ticket['number_of_tickets'])
     total_value_purchased = float(current_ticket['total_value_purchased'])
       
     price_metrics = cls.__get_price_metrics(current_ticket)
 
-    cls.ticket = TicketEntity(
+    new_ticket = TicketEntity(
       _nameTicket=            cls.__get_ticket_name_api(current_ticket),
       _ticket=                ticket,
       _number_of_tickets=     number_of_tickets,
@@ -138,25 +132,25 @@ class TicketController:
       ]
     )
 
-    cls.database_adapter.create_ticket(cls.ticket)
+    cls.database_adapter.create_ticket(new_ticket)
   
   @classmethod
-  def __handle_update_ticket(cls, new_ticket, db_ticket):
-    new_number_of_tickets = int(db_ticket['number_of_tickets']) + int(new_ticket['number_of_tickets'])
-    new_total_value_purchased = float(db_ticket['total_value_purchased']) + float(new_ticket['total_value_purchased'])
-    current_history = eval(db_ticket['history']) 
+  def __handle_update_ticket(cls, new_ticket, db_ticket) -> None:
+    updated_number_of_tickets = int(db_ticket['number_of_tickets']) + int(new_ticket['number_of_tickets'])
+    updated_total_value_purchased = float(db_ticket['total_value_purchased']) + float(new_ticket['total_value_purchased'])
+    db_history = eval(db_ticket['history']) 
 
     price_metrics = cls.__get_price_metrics(new_ticket, db_ticket)
 
     updated_ticket = TicketEntity(
       _nameTicket=            db_ticket['nameTicket'],
       _ticket=                db_ticket['ticket'],
-      _number_of_tickets=     new_number_of_tickets,
-      _total_value_purchased= new_total_value_purchased,
+      _number_of_tickets=     updated_number_of_tickets,
+      _total_value_purchased= updated_total_value_purchased,
       _highest_price=         price_metrics['highest_price'],
       _lowest_price=          price_metrics['lowest_price'],
       _average_price=         price_metrics['average_price'],
-      _history=               current_history + [
+      _history=               db_history + [
         {
           'qntTickets': new_ticket['number_of_tickets'],
           'valuePerTicket': float(new_ticket['total_value_purchased']) / int(new_ticket['number_of_tickets']),
@@ -165,12 +159,10 @@ class TicketController:
       ]
     )
 
-    current_app.logger.info(f'updated_ticket: {updated_ticket}')
-
     cls.database_adapter.update_ticket_increment(updated_ticket)
   
   @classmethod
-  def __get_ticket_name_api(cls, current_ticket) -> str:    
+  def __get_ticket_name_api(cls, current_ticket) -> str:
     ticker = yf.Ticker(current_ticket['ticket'])
     ticketName = ticker.info.get('longName')
 
@@ -180,28 +172,27 @@ class TicketController:
     return ticketName
   
   @classmethod
-  def __get_price_metrics(cls, new_ticket, db_ticket=None):
+  def __get_price_metrics(cls, new_ticket, db_ticket=None) -> dict[str, float]:
     new_total_value_purchased = float(new_ticket['total_value_purchased'])
     new_number_of_tickets = float(new_ticket['number_of_tickets'])
     new_price = new_total_value_purchased / new_number_of_tickets
 
     if db_ticket is None:
-        return {
-            'average_price': new_price,
-            'highest_price': new_price,
-            'lowest_price': new_price
-        }
+      return {
+        'average_price': new_price,
+        'highest_price': new_price,
+        'lowest_price': new_price
+      }
     
     total_tickets = db_ticket['number_of_tickets'] + new_number_of_tickets
     total_value_purchased = db_ticket['total_value_purchased'] + new_total_value_purchased
-    
     new_average_price = total_value_purchased / total_tickets
     
     highest_price = max(db_ticket['highest_price'], new_price)
     lowest_price = min(db_ticket['lowest_price'], new_price)
 
     return {
-        'average_price': new_average_price,
-        'highest_price': highest_price,
-        'lowest_price': lowest_price
+      'average_price': new_average_price,
+      'highest_price': highest_price,
+      'lowest_price': lowest_price
     }
