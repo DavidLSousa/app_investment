@@ -46,8 +46,9 @@ class TicketController:
       return render_template('all_tickets_page.html', title_page='Meus Ativos', tickets=test)
     
     except ValueError as err:
-      print(f'ERROR render_all_page: {err}')
-      return { 'status': 500}
+      stack_trace = traceback.format_exc()
+      current_app.logger.error(f'ERRO render_all_page: {stack_trace}')
+      return {'status': 500, 'error': 'Erro interno do servidor'}
   
   @classmethod
   def render_add_page(cls): # Pegar info do db e passar para renderizar a pagina com os dados dos tickets do db
@@ -56,8 +57,9 @@ class TicketController:
       return render_template('add_tickets_page.html', title_page='Adicionar Ativos')
     
     except ValueError as err:
-      print(f'ERROR render_add_page: {err}')
-      return { 'status': 500}
+      stack_trace = traceback.format_exc()
+      current_app.logger.error(f'ERRO render_add_page: {stack_trace}')
+      return {'status': 500, 'error': 'Erro interno do servidor'}
 
   @classmethod
   def add_ticket_controller(cls):
@@ -88,8 +90,9 @@ class TicketController:
       return { "status": 200 }
     
     except ValueError as err:
-      print(f'ERROR delete_ticket_controller: {err}')
-      return { 'status': 500 }
+      stack_trace = traceback.format_exc()
+      current_app.logger.error(f'ERRO delete_ticket_controller: {stack_trace}')
+      return {'status': 500, 'error': 'Erro interno do servidor'}
 
   @classmethod
   def edit_ticket_controller(cls, ticker):
@@ -101,8 +104,9 @@ class TicketController:
       return { "status": 200 }
     
     except ValueError as err:
-      print(f'ERROR edit_ticket_controller: {err}')
-      return { 'status': 500 }
+      stack_trace = traceback.format_exc()
+      current_app.logger.error(f'ERRO edit_ticket_controller: {stack_trace}')
+      return {'status': 500, 'error': 'Erro interno do servidor'}
 
   # ============================ Private methods ============================ #
   @classmethod
