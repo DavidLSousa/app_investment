@@ -6,22 +6,22 @@ from src.domain.interfaces.ticket_interface import TicketInterface
 
 @dataclass
 class DatabaseAdapter(TicketInterface):
-  database: MysqlServices
+  database: TicketInterface # Mudei sem testar
 
-  def get_ticket(self, ticket_name: str):
+  def get_ticket(self, ticket_name: str) -> TicketEntity | None:
     return self.database.get_ticket(ticket_name)
   
-  def get_all_ticket(self):
+  def get_all_ticket(self) -> list[TicketEntity] | None:
     return self.database.get_all_ticket()
   
   def create_ticket(self, ticket: TicketEntity):
-    return self.database.create_ticket(ticket)
+    self.database.create_ticket(ticket)
   
   def update_ticket(self, ticket_id: int, ticket: TicketEntity):
-    return self.database.update_ticket(ticket_id, ticket)  
+    self.database.update_ticket(ticket_id, ticket)  
   
   def update_ticket_increment(self, ticket: TicketEntity):
-    return self.database.update_ticket_increment(ticket)
+    self.database.update_ticket_increment(ticket)
   
   def delete_ticket(self, ticket_id: int):
-    return self.database.delete_ticket(ticket_id)
+    self.database.delete_ticket(ticket_id)
