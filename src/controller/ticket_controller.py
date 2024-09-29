@@ -51,6 +51,7 @@ class TicketController:
   
   @classmethod
   def render_add_page(cls): # Pegar info do db e passar para renderizar a pagina com os dados dos tickets do db
+  
     try:
       return render_template('add_tickets_page.html', title_page='Adicionar Ativos')
     
@@ -69,15 +70,15 @@ class TicketController:
         
         if check_ticket_in_db is None:
           cls.__handle_create_ticket(current_ticket)
-          return { "status": 200, 'message': 'Ticket criado com sucesso' }
+        else:
+          cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
 
-        cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
-        return { "status": 200, 'message': 'Ticket atualizado com sucesso' }
+      return { "status": 200, 'message': 'Ticket criado com sucesso' }
     
     except Exception as err:
       stack_trace = traceback.format_exc()
       current_app.logger.error(f'ERRO add_ticket_controller: {stack_trace}')
-      return {'status': 500, 'message': 'Erro interno do servidor'}
+      return {'status': 500, 'error': 'Erro interno do servidor'}
 
   @classmethod
   def delete_ticket_controller(cls, ticker):
