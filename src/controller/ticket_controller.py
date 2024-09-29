@@ -50,9 +50,7 @@ class TicketController:
       return { 'status': 500}
   
   @classmethod
-  def render_add_page(cls):
-    # Pegar info do db e passar para renderizar a pagina com os dados dos tickets do db
-  
+  def render_add_page(cls): # Pegar info do db e passar para renderizar a pagina com os dados dos tickets do db
     try:
       return render_template('add_tickets_page.html', title_page='Adicionar Ativos')
     
@@ -67,21 +65,19 @@ class TicketController:
         raise ValueError("Dados JSON não fornecidos")
 
       for current_ticket in req.json:
-        check_ticket_in_db = cls.database_adapter.get_ticket(current_ticket['ticket']) # get_ticket recebe um int no adapter
+        check_ticket_in_db = cls.database_adapter.get_ticket(current_ticket['ticket']) 
         
         if check_ticket_in_db is None:
           cls.__handle_create_ticket(current_ticket)
-        else:
-          cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
+          return { "status": 200, 'message': 'Ticket criado com sucesso' }
 
-      return { "status": 200 }
-    
-    # Falta testar a iteração ao add mais de um ticket por vez;
+        cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
+        return { "status": 200, 'message': 'Ticket atualizado com sucesso' }
     
     except Exception as err:
       stack_trace = traceback.format_exc()
       current_app.logger.error(f'ERRO add_ticket_controller: {stack_trace}')
-      return {'status': 500, 'error': 'Erro interno do servidor'}
+      return {'status': 500, 'message': 'Erro interno do servidor'}
 
   @classmethod
   def delete_ticket_controller(cls, ticker):
@@ -98,6 +94,7 @@ class TicketController:
   def edit_ticket_controller(cls, ticker):
     try:
       # Não implementar até ajustar o front
+        # É uma venda de ativos
       print(f'Ticker edit:  {ticker}')
 
       return { "status": 200 }

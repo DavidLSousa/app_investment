@@ -52,4 +52,6 @@ if __name__ == '__main__':
 # docker exec -it mysql-db mysql -u root -p ----> abre o mysql do container
 
 # docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <NOME_DO_CONTAINER> -> Retorna o IP do container
-  # docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' app_investment_mysql-db
+  # docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' app_investment_mysql-d
+# docker inspect app_investment_mysql-db 
+# docker inspect app_investment_mysql-db | grep IPAddress
