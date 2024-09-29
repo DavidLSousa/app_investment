@@ -1,6 +1,13 @@
 # Template
 [ ] Paginas(n a main) devem ter uma seta para voltar pra pag anterior
 
+# MainPage 
+    [ ] Add novo campo para historico de transações;
+
+# Security
+    [ ] Sanitização de dados no python (backend)
+        # Da pra fazer no front sem npm?
+
 # JS e Backend
 [ ] all_tickets_page
     [ ] Carregar tickets do BD
@@ -9,14 +16,25 @@
         # deve permitir do diminiuir o numero de ativos e informar o valor da venda?
         # Como esse calculo é feito? O valor da venda vem do usuário ou de uma API?
 
+    # Frontend
     [ ] .js -> rever o que o catch deve fazer;
+    [ ] html -> Mudar deleção e edição de tickets para um icone de carrinho de compras
+        # Deve abrir um popup onde vai pedir o numero de tickets vendidos e o valor total da venda
+        # isso muda o js tbm
+    
+    [ ] Manter um historico de compras e vendas?
+        # Caso seja feita uma trasação errada e queira reverter
 
 [ ] add_tickets_page
     [ ] Field quantidade e valor nao podem ser negativos
 
     [ ] .js -> rever o que o catch deve fazer;
 
-[ ] Ajustar retorno das mensagens
+    # Frontend
+    [ ] html -> Btn de adicionar deve mudar enquanto aguarda o retorno do backend
+        # E voltar ao normal quando o retorno chega
+
+[ ] Ajustar retorno das mensagens a ser mostra no frontend vindo do backend a depender do que foi executado
     # Sucesso
         [ ] informar oq foi feito
             # EX: { 'status'= 200, 'message'=<MGS> }
@@ -27,3 +45,11 @@
             # EX: { 'status'= 500, 'message'=<MGS> }
             MGS = f'Erro ao add o {ticket}!'
             MGS = f'Erro ao atualizar o {ticket}!'
+
+APIS:
+[ ] Brapi
+    Para ações no Brasil
+[ ] CoinGecko API
+    Para criptomoedas
+[ ] yfinance
+    Para mercado americano
