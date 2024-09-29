@@ -73,7 +73,7 @@ class TicketController:
         else:
           cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
 
-      return { "status": 200, 'message': 'Ticket criado com sucesso' }
+      return { "status": 200, 'message': 'Tudo certo' }
     
     except Exception as err:
       stack_trace = traceback.format_exc()
