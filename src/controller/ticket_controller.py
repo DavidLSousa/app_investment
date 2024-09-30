@@ -9,8 +9,9 @@ from flask import (
 )
 from dataclasses import dataclass
 
-from adapters import database_adapter
+from src.schemas.ticket_sold_schema import TicketSoldSchema
 from src.schemas.ticket_schema import TicketSchema
+
 from adapters.database_adapter import DatabaseAdapter
 from src.domain.services.mysql_services import MysqlServices
 from src.domain.entities.ticket_entity import TicketEntity
@@ -20,7 +21,7 @@ class TicketController:
     database_adapter = DatabaseAdapter(database=MysqlServices())
 
     @classmethod
-    def render_all_page(cls):
+    def render_all_page(cls): # implementar isso para poder testar a sale_ticket_controller
         test = [
             {
                 'ticket': 'ITSA4',
@@ -51,7 +52,7 @@ class TicketController:
         except ValueError as err:
             stack_trace = traceback.format_exc()
             current_app.logger.error(f'ERRO render_all_page: {stack_trace}')
-            return {'status': 500, 'error': 'Erro interno do servidor'}
+            return jsonify({'error': 'Erro interno do servidor'}), 500
     
     @classmethod
     def render_add_page(cls):
@@ -61,7 +62,7 @@ class TicketController:
         except ValueError as err:
             stack_trace = traceback.format_exc()
             current_app.logger.error(f'ERRO render_add_page: {stack_trace}')
-            return {'status': 500, 'error': 'Erro interno do servidor'}
+            return jsonify({'error': 'Erro interno do servidor'}), 500
 
     @classmethod
     def add_ticket_controller(cls):
@@ -81,34 +82,62 @@ class TicketController:
                     else:
                         cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
 
-            return jsonify({'status': 200, 'success': 'Tudo certo'})
+            return jsonify({'success': 'Tudo certo'}), 200
         
         except Exception as err:
             stack_trace = traceback.format_exc()
             current_app.logger.error(f'ERRO add_ticket_controller: {stack_trace}')
-            return jsonify({'status': 500, 'error': 'Erro interno do servidor'}), 500
+            return jsonify({'error': 'Erro interno do servidor'}), 500
 
     @classmethod
-    def sale_ticket_controller(cls, ticker): # Ajustar o front antes de qualquer coisa 
+    def sale_ticket_controller(cls):  
         try:
-            print(f'Ticker edit:  {ticker}')
-            # database_adapter.update_ticket_sale(ticker)
-                # Deve receber: 
-                    # ticker_id, 
-                    # number_of_sale_tickets, 
-                    # total_sale_value
-                # Isso deve atualizar o ticket
-                    # Precisa salvar a venda no historico?
-                        # Seria add com a quatidade de tickets negativa para indicar venda?
-                        # Ou o obj do dict deve ser diferente ?
-                            # { number_of_sale_tickets, total_sale_value, date }
+            if not req.json:
+                raise ValueError("Dados JSON não fornecidos")
+            
+            schema = TicketSoldSchema()
+            data = schema.load(req.json)
 
-            return { 'status': 200, 'success': 'Tudo certo' }
+            if data is None:
+                raise ValueError("Dados JSON não fornecidos")
+            
+            dataJson = {
+                'ticket': data[0],
+                'number_of_sale_tickets': data[1],
+                'total_sale_value': data[2],
+                'date': cls.__get_datetime()
+            }
+
+            db_ticket = cls.database_adapter.get_ticket(dataJson['ticket'])
+            
+            if db_ticket is None:
+                raise ValueError('Ticket não encontrado')
+            
+            updated_ticket = TicketEntity(
+                _nameTicket=            db_ticket['nameTicket'],
+                _ticket=                db_ticket['ticket'],
+                _number_of_tickets=     db_ticket['number_of_tickets'] - dataJson['number_of_sale_tickets'],
+                _total_value_purchased= db_ticket['total_value_purchased'] - dataJson['total_sale_value'],
+                _highest_price=         db_ticket['highest_price'],
+                _lowest_price=          db_ticket['lowest_price'],
+                _average_price=         db_ticket['average_price'],
+                _history=               db_ticket['history'] + [
+                    {
+                        'number_of_sale_tickets': dataJson['number_of_sale_tickets'],
+                        'total_sale_value': dataJson['total_sale_value'],
+                        'date': cls.__get_datetime()
+                    }
+                ]
+            )
+
+            cls.database_adapter.update_ticket_sale(updated_ticket)
+
+            return jsonify({ 'success': 'Tudo certo' }), 200
         
         except ValueError as err:
             stack_trace = traceback.format_exc()
             current_app.logger.error(f'ERRO edit_ticket_controller: {stack_trace}')
-            return {'status': 500, 'error': 'Erro interno do servidor'}
+            return jsonify({'error': 'Erro interno do servidor'}), 500
 
     # =========================== Private methods =========================== #
     @classmethod
@@ -131,7 +160,7 @@ class TicketController:
                 {
                     'qntTickets': number_of_tickets,
                     'valuePerTicket': total_value_purchased / number_of_tickets,
-                    'date': datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+                    'date': cls.__get_datetime()
                 }
             ]
         )
@@ -158,7 +187,7 @@ class TicketController:
                 {
                     'qntTickets': new_ticket['number_of_tickets'],
                     'valuePerTicket': float(new_ticket['total_value_purchased']) / int(new_ticket['number_of_tickets']),
-                    'date': datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+                    'date': cls.__get_datetime()
                 }
             ]
         )
@@ -190,6 +219,10 @@ class TicketController:
             'highest_price': highest_price,
             'lowest_price': lowest_price
         }
+
+    @classmethod
+    def __get_datetime(cls):
+        return datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 
     # ================================ APIs ================================= #
     @classmethod
