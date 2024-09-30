@@ -24,11 +24,6 @@ def render_all_ticket_page():
     return TicketController.render_all_page()
 
 
-@tickets_bp.route('/tickets/all/<ticker>', methods=['DELETE'])
-def delete_ticket(ticker):
-    return TicketController.delete_ticket_controller(ticker)
-
-
 @tickets_bp.route('/tickets/all/<ticker>', methods=['PUT'])
 def put_ticket(ticker):
-    return TicketController.edit_ticket_controller(ticker)
+    return TicketController.sale_ticket_controller(ticker)

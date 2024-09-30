@@ -88,19 +88,7 @@ class TicketController:
             return jsonify({'status': 500, 'error': 'Erro interno do servidor'}), 500
 
     @classmethod
-    def delete_ticket_controller(cls, ticker):
-        try:
-            print(f'Ticker del:  {ticker}')
-
-            return { 'status': 200, 'success': 'Tudo certo' }
-        
-        except ValueError as err:
-            stack_trace = traceback.format_exc()
-            current_app.logger.error(f'ERRO delete_ticket_controller: {stack_trace}')
-            return {'status': 500, 'error': 'Erro interno do servidor'}
-
-    @classmethod
-    def edit_ticket_controller(cls, ticker):
+    def sale_ticket_controller(cls, ticker):
         try:
             print(f'Ticker edit:  {ticker}')
 
