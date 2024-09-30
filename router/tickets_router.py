@@ -1,6 +1,5 @@
 from flask import (
-    Blueprint,
-    jsonify
+    Blueprint
 )
 from src.controller.ticket_controller import TicketController
 

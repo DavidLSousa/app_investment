@@ -1,6 +1,5 @@
 from flask import (
-    Blueprint, 
-    request
+    Blueprint
     )
 from src.controller import news_controller
 
