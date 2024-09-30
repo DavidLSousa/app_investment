@@ -1,28 +1,19 @@
 # Template
 [ ] Paginas(n a main) devem ter uma seta para voltar pra pag anterior
 
-# MainPage 
-    [ ] Add novo campo para historico de transações;
-
 # Security
-    [x] Sanitização de dados no python (backend)
-        # Da pra fazer no front sem npm?
+
+
 
 # JS e Backend
 [ ] all_tickets_page
-    [x] Carregar tickets do BD
-
-
     # Frontend
     [ ] .js -> rever o que o catch deve fazer;
-    [x] html -> Mudar deleção e edição de tickets para um icone de carrinho de compras
-        # Deve abrir um popup onde vai pedir o numero de tickets vendidos e o valor total da venda
-        # isso muda o js tbm
     [ ] popup de venda de ativos
         [ ] o valor de venda pode ser maior do que oq esta na tabela?
     
-    [ ] Manter um historico de compras e vendas?
-        # Caso seja feita uma trasação errada e queira reverter
+    [ ] Add novo campo para historico de transações;
+        # Caso seja feita uma trasação errada e queira reverter (ctrl+z)
 
 [ ] add_tickets_page
     [ ] Field quantidade e valor nao podem ser negativos
