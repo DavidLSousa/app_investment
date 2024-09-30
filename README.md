@@ -46,10 +46,12 @@
             MGS = f'Erro ao add o {ticket}!'
             MGS = f'Erro ao atualizar o {ticket}!'
 
+[ ] service deve ter um raise inves de return None?
+
 APIS:
-[ ] Brapi
+[x] Brapi
     Para ações no Brasil
-[ ] CoinGecko API
+[x] CoinGecko API
     Para criptomoedas
-[ ] yfinance
+[x] yfinance
     Para mercado americano
