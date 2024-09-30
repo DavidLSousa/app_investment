@@ -1,8 +1,9 @@
 from flask import Flask
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 from models import connectDB
-
 from router.main_router import main_page_bp
 from router.tickets_router import tickets_bp
 from router.news_router import news_bp
@@ -11,7 +12,7 @@ from router.dashboard_router import dashboard_bp
 app = Flask(__name__)
 
 # DB MySQL
-if os.getenv('RUNNING_IN_DOCKER') == 'True':
+if os.getenv('RUNNING_WITHOUT_DOCKER') == 'True':
     connectDB(app)
 
 # Routers
