@@ -24,6 +24,6 @@ def render_all_ticket_page():
     return TicketController.render_all_page()
 
 
-@tickets_bp.route('/tickets/all/<ticker>', methods=['PUT'])
-def put_ticket(ticker):
-    return TicketController.sale_ticket_controller(ticker)
+@tickets_bp.route('/tickets/all', methods=['PUT'])
+def put_ticket():
+    return TicketController.sale_ticket_controller()
