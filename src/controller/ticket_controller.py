@@ -8,8 +8,8 @@ from flask import (
     jsonify
 )
 from dataclasses import dataclass
-from typing import List
-from marshmallow import Schema, fields, ValidationError
+
+from src.schemas.ticket_schema import TicketSchema
 
 from adapters.database_adapter import DatabaseAdapter
 from src.domain.services.mysql_services import MysqlServices
@@ -72,13 +72,14 @@ class TicketController:
             schema = TicketSchema(many=True)
             dataJson = schema.load(req.json)
 
-            for current_ticket in dataJson:
-                check_ticket_in_db = cls.database_adapter.get_ticket(current_ticket['ticket'])
-                
-                if check_ticket_in_db is None:
-                    cls.__handle_create_ticket(current_ticket)
-                else:
-                    cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
+            if dataJson is not None:
+                for current_ticket in dataJson:
+                    check_ticket_in_db = cls.database_adapter.get_ticket(current_ticket['ticket'])
+                    
+                    if check_ticket_in_db is None:
+                        cls.__handle_create_ticket(current_ticket)
+                    else:
+                        cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
 
             return jsonify({'status': 200, 'success': 'Tudo certo'})
         
@@ -201,11 +202,6 @@ class TicketController:
             'highest_price': highest_price,
             'lowest_price': lowest_price
         }
-
-class TicketSchema(Schema):
-    ticket = fields.Str(required=True)
-    number_of_tickets = fields.Int(required=True, strict=True, validate=lambda n: n > 0)
-    total_value_purchased = fields.Float(required=True, strict=True, validate=lambda v: v > 0)
 
 '''
 APIS:
