@@ -1,64 +1,64 @@
 const createPopupElement = (type, message, currentValue = '') => {
-  const isDelete = type === 'delete';
-  const popupHTML = `
-    <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full ${isDelete ? 'border-2 border-red-500' : ''}">
-      <h3 class="text-lg font-bold mb-4 ${isDelete ? 'text-red-500' : ''}">${isDelete ? 'Confirmar Exclusão' : 'Editar Quantidade'}</h3>
-      <p class="mb-4">${message}</p>
-      ${type === 'edit' ? `<input type="number" class="w-full border rounded px-2 py-1 mb-4" value="${currentValue}">` : ''}
-      <div class="flex justify-end space-x-2">
-        <button class="cancel px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancelar</button>
-        <button class="confirm px-4 py-2 text-white rounded ${isDelete ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}">${isDelete ? 'Excluir' : 'Salvar'}</button>
-      </div>
-    </div>
-  `;
+    const isDelete = type === 'delete';
+    const popupHTML = `
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full ${isDelete ? 'border-2 border-red-500' : ''}">
+            <h3 class="text-lg font-bold mb-4 ${isDelete ? 'text-red-500' : ''}">${isDelete ? 'Confirmar Exclusão' : 'Editar Quantidade'}</h3>
+            <p class="mb-4">${message}</p>
+            ${type === 'edit' ? `<input type="number" class="w-full border rounded px-2 py-1 mb-4" value="${currentValue}">` : ''}
+            <div class="flex justify-end space-x-2">
+                <button class="cancel px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancelar</button>
+                <button class="confirm px-4 py-2 text-white rounded ${isDelete ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}">${isDelete ? 'Excluir' : 'Salvar'}</button>
+            </div>
+        </div>
+    `;
 
-  const wrapper = document.createElement('div');
-  wrapper.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-  wrapper.innerHTML = popupHTML;
-  return wrapper;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    wrapper.innerHTML = popupHTML;
+    return wrapper;
 };
 
 const createPopup = (type, message, currentValue = '') => {
-  return new Promise((resolve) => {
+    return new Promise((resolve) => {
     const popup = createPopupElement(type, message, currentValue);
     document.body.appendChild(popup);
 
     const closePopup = () => {
-      document.body.removeChild(popup);
-      resolve(null);
+        document.body.removeChild(popup);
+        resolve(null);
     };
 
     // Fecha o popup ao clicar fora dele
     popup.querySelector('.cancel').addEventListener('click', closePopup);
     popup.addEventListener('click', (e) => {
-      if (e.target === popup) closePopup();
+        if (e.target === popup) closePopup();
     });
 
     // Confirmação do popup
     popup.querySelector('.confirm').addEventListener('click', () => {
-      const input = popup.querySelector('input');
-      const result = type === 'edit' ? input?.value : true;
-      resolve({ 
+        const input = popup.querySelector('input');
+        const result = type === 'edit' ? input?.value : true;
+        resolve({ 
         result, 
         updatePopup: (message, success = true) => {
-          const isEdit = type === 'edit'; // Verifica se a operação é de edição
+            const isEdit = type === 'edit'; // Verifica se a operação é de edição
 
-          popup.innerHTML = `
-            <div class="bg-${isEdit && success ? 'green-500' : !isEdit && success ? 'red-500' : 'red-500'} p-6 rounded-lg shadow-xl max-w-sm w-full flex items-center justify-center" style="min-height: 150px;">
-              <p class="text-white text-xl font-bold">${message}</p>
-            </div>
-          `;
+            popup.innerHTML = `
+                <div class="bg-${isEdit && success ? 'green-500' : !isEdit && success ? 'red-500' : 'red-500'} p-6 rounded-lg shadow-xl max-w-sm w-full flex items-center justify-center" style="min-height: 150px;">
+                <p class="text-white text-xl font-bold">${message}</p>
+                </div>
+            `;
 
-          popup.className = 'fixed inset-0 flex items-center justify-center z-50';
+            popup.className = 'fixed inset-0 flex items-center justify-center z-50';
 
-          setTimeout(() => {
-            closePopup();
-            if (success) location.reload();
-          }, 2000);
-        }
-      });
+            setTimeout(() => {
+                closePopup();
+                if (success) location.reload();
+            }, 2000);
+            }
+        });
     });
-  });
+    });
 };
 
 const handleApiRequest = async (apiCall, successMessage, errorMessage) => {
@@ -96,52 +96,52 @@ const deleteTicket = async (tickerSymbol) => {
 
 // Inicializa os listeners dos botões após carregar o DOM
 document.addEventListener('DOMContentLoaded', () => {
-  const tickets = document.querySelectorAll('.ticket-item');
+    const tickets = document.querySelectorAll('.ticket-item');
 
-  tickets.forEach(ticket => {
+    tickets.forEach(ticket => {
     const openButton = ticket.querySelector('[data-js="open-actions"]');
     const popup = ticket.querySelector('[data-js="actions-popup"]');
     const editButton = ticket.querySelector('[data-js="edit-ticket"]');
     const deleteButton = ticket.querySelector('[data-js="delete-ticket"]');
 
     openButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      popup.classList.toggle('hidden');
+        e.stopPropagation();
+        popup.classList.toggle('hidden');
     });
 
     document.addEventListener('click', () => popup.classList.add('hidden'));
     popup.addEventListener('click', (e) => e.stopPropagation());
 
     editButton.addEventListener('click', async () => {
-      const tickerSymbol = ticket.querySelector('[data-js="ticker"]').textContent;
-      const currentQuantity = ticket.querySelector('[data-js="number_of_tickets"]').textContent;
-      
-      const response = await createPopup('edit', 'Digite a nova quantidade de tickets:', currentQuantity);
-      
-      if (response && response.result !== null && response.result !== currentQuantity) {
-        const { success, message } = await handleApiRequest(
-          () => editTicket(tickerSymbol, response.result),
-          'Editado!',
-          'Erro ao editar o ticket'
-        );
+        const tickerSymbol = ticket.querySelector('[data-js="ticker"]').textContent;
+        const currentQuantity = ticket.querySelector('[data-js="number_of_tickets"]').textContent;
+        
+        const response = await createPopup('edit', 'Digite a nova quantidade de tickets:', currentQuantity);
+        
+        if (response && response.result !== null && response.result !== currentQuantity) {
+            const { success, message } = await handleApiRequest(
+                () => editTicket(tickerSymbol, response.result),
+                'Editado!',
+                'Erro ao editar o ticket'
+            );
         response.updatePopup(message, success);
-      }
+        }
     });
 
     deleteButton.addEventListener('click', async () => {
-      const tickerSymbol = ticket.querySelector('[data-js="ticker"]').textContent;
-      const ticketName = ticket.querySelector('[data-js="ticket-name"]').textContent;
-      
-      const response = await createPopup('delete', `Tem certeza que deseja deletar o ticket ${ticketName}?`);
-      
-      if (response && response.result) {
-        const { success, message } = await handleApiRequest(
-          () => deleteTicket(tickerSymbol),
-          'Excluído!',
-          'Erro ao excluir o ticket'
-        );
-        response.updatePopup(message, success);
-      }
+        const tickerSymbol = ticket.querySelector('[data-js="ticker"]').textContent;
+        const ticketName = ticket.querySelector('[data-js="ticket-name"]').textContent;
+        
+        const response = await createPopup('delete', `Tem certeza que deseja deletar o ticket ${ticketName}?`);
+        
+        if (response && response.result) {
+            const { success, message } = await handleApiRequest(
+            () => deleteTicket(tickerSymbol),
+            'Excluído!',
+            'Erro ao excluir o ticket'
+            );
+            response.updatePopup(message, success);
+        }
+        });
     });
-  });
 });

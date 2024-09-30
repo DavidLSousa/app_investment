@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 # DB MySQL
 if os.getenv('RUNNING_IN_DOCKER') == 'True':
-  connectDB(app)
+    connectDB(app)
 
 # Routers
 app.register_blueprint(main_page_bp)
@@ -21,12 +21,12 @@ app.register_blueprint(news_bp)
 app.register_blueprint(dashboard_bp)
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 # OUTRAS FORMAS DE RODAR:
 
 # flask --app main run -
-  # flask --app main run --port 3000
+    # flask --app main run --port 3000
 # flask --app main run --debug
 
 # Atualizar requirements
@@ -52,6 +52,6 @@ if __name__ == '__main__':
 # docker exec -it mysql-db mysql -u root -p ----> abre o mysql do container
 
 # docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <NOME_DO_CONTAINER> -> Retorna o IP do container
-  # docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' app_investment_mysql-d
+    # docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' app_investment_mysql-d
 # docker inspect app_investment_mysql-db 
 # docker inspect app_investment_mysql-db | grep IPAddress

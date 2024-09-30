@@ -9,50 +9,50 @@ const addTicketButton = document.querySelector('[data-js="add-ticket"]');
 let ticketCount = 1;
 
 const updateTicketLabels = () => {
-  const ticketGroups = ticketFields.querySelectorAll('.ticket-group');
-  ticketGroups.forEach((group, index) => {
-    group.querySelector('h3').innerText = `Ticket ${index + 1}`;
-  });
-  ticketCount = ticketGroups.length;
+    const ticketGroups = ticketFields.querySelectorAll('.ticket-group');
+    ticketGroups.forEach((group, index) => {
+        group.querySelector('h3').innerText = `Ticket ${index + 1}`;
+    });
+    ticketCount = ticketGroups.length;
 }
 
 const addRemoveBtn = event => {
-  const ticketGroup = event.target.closest('.ticket-group');
-  ticketGroup.remove();
-  updateTicketLabels();
+    const ticketGroup = event.target.closest('.ticket-group');
+    ticketGroup.remove();
+    updateTicketLabels();
 }
 
 const addTicket = () => {
-  ticketCount++;
+    ticketCount++;
 
-  const newGroup = document.createElement('div');
-  newGroup.className = 'ticket-group mb-4 border border-gray-300 p-4 rounded-md';
+    const newGroup = document.createElement('div');
+    newGroup.className = 'ticket-group mb-4 border border-gray-300 p-4 rounded-md';
 
-  newGroup.innerHTML = `
-    <div class="flex justify-between">
-      <h3 class="font-extrabold text-gray-700">Ticket ${ticketCount}</h3>
-      <button type="button" class="removeTicket bg-inherit text-red-500 font-semibold py-1 px-3 rounded">
-        Remover
-      </button>
-    </div>
-    <div class="flex flex-col md:flex-row md:space-x-4">
-      <div class="mt-2 w-full">
-        <label class="block text-sm font-medium text-gray-700">Nome do Ticket</label>
-        <input type="text" name="ticketName" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: Concerto">
-      </div>
-      <div class="mt-2 w-full">
-        <label class="block text-sm font-medium text-gray-700">Quantidade</label>
-        <input type="number" name="quantity" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: 2">
-      </div>
-      <div class="mt-2 w-full">
-        <label class="block text-sm font-medium text-gray-700">Valor Pago</label>
-        <input type="text" name="value" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: R$ 100,00">
-      </div>
-    </div>
-  `;
+    newGroup.innerHTML = `
+        <div class="flex justify-between">
+        <h3 class="font-extrabold text-gray-700">Ticket ${ticketCount}</h3>
+        <button type="button" class="removeTicket bg-inherit text-red-500 font-semibold py-1 px-3 rounded">
+            Remover
+        </button>
+        </div>
+        <div class="flex flex-col md:flex-row md:space-x-4">
+        <div class="mt-2 w-full">
+            <label class="block text-sm font-medium text-gray-700">Nome do Ticket</label>
+            <input type="text" name="ticketName" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: Concerto">
+        </div>
+        <div class="mt-2 w-full">
+            <label class="block text-sm font-medium text-gray-700">Quantidade</label>
+            <input type="number" name="quantity" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: 2">
+        </div>
+        <div class="mt-2 w-full">
+            <label class="block text-sm font-medium text-gray-700">Valor Pago</label>
+            <input type="text" name="value" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-green-500" placeholder="Ex: R$ 100,00">
+        </div>
+        </div>
+    `;
 
-  ticketFields.appendChild(newGroup);
-  newGroup.querySelector('.removeTicket').addEventListener('click', addRemoveBtn);
+    ticketFields.appendChild(newGroup);
+    newGroup.querySelector('.removeTicket').addEventListener('click', addRemoveBtn);
 }
 
 const showPopupRes = data => {
@@ -80,41 +80,41 @@ const showPopupRes = data => {
 
 const buildJson = ticketGroups => {
 
-  const tickets = ticketGroups.map(group => {
-    return  {
-      ticket: group.querySelector('input[name="ticketName"]').value,
-      number_of_tickets: parseInt(group.querySelector('input[name="quantity"]').value),
-      total_value_purchased: group.querySelector('input[name="value"]').value
-    };
-  });
+    const tickets = ticketGroups.map(group => {
+        return  {
+        ticket: group.querySelector('input[name="ticketName"]').value,
+        number_of_tickets: parseInt(group.querySelector('input[name="quantity"]').value),
+        total_value_purchased: group.querySelector('input[name="value"]').value
+        };
+    });
 
-  return JSON.stringify(tickets);
+    return JSON.stringify(tickets);
 }
 
 const handleSubmitForm = async event => {
-  event.preventDefault();
+    event.preventDefault();
 
-  const ticketGroups = Array.from(ticketFields.querySelectorAll('.ticket-group'));
-  const jsonData = buildJson(ticketGroups)
-  
-  try {
-    const res = await fetch('/tickets/add', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonData
-    });
-
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-
-    const data = await res.json();
+    const ticketGroups = Array.from(ticketFields.querySelectorAll('.ticket-group'));
+    const jsonData = buildJson(ticketGroups)
     
-    showPopupRes(data)
+    try {
+        const res = await fetch('/tickets/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: jsonData
+        });
 
-  } catch (error) {
-    console.error('Erro:', error); // rever isso
-  }
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data = await res.json();
+        
+        showPopupRes(data)
+
+    } catch (error) {
+        console.error('Erro:', error); // rever isso
+    }
 
 }
 

@@ -1,8 +1,8 @@
 {
-  "prerun": "# some code here",
-  "directory": "migrations",
-  "history": "migratehistory",
-  "models": [
-    "models.Ticket"
-  ]
+    "prerun": "# some code here",
+    "directory": "migrations",
+    "history": "migratehistory",
+    "models": [
+        "models.Ticket"
+    ]
 }

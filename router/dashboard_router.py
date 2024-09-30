@@ -1,6 +1,6 @@
 from flask import (
-  Blueprint,
-  request
+    Blueprint,
+    request
 )
 from src.controller import dashboard_controller
 
