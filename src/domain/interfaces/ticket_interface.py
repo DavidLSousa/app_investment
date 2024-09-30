@@ -4,11 +4,11 @@ from src.domain.entities.ticket_entity import TicketEntity
 
 class TicketInterface(ABC):
     @abstractmethod
-    def get_ticket(self, ticket_name: str) -> TicketEntity | None:
+    def get_ticket(self, ticket_name: str):
         pass
 
     @abstractmethod
-    def get_all_ticket(self) -> list[TicketEntity] | None:
+    def get_all_ticket(self):
         pass
 
     @abstractmethod
@@ -16,7 +16,7 @@ class TicketInterface(ABC):
         pass
 
     @abstractmethod
-    def update_ticket_sale(self, ticket_id: int, ticket: TicketEntity) -> None:
+    def update_ticket_sale(self, dataUpdated: TicketEntity) -> None:
         pass
 
     @abstractmethod

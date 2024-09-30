@@ -8,7 +8,7 @@ from models import Ticket
 
 @dataclass
 class MysqlServices(TicketInterface):
-    def get_ticket(self, ticket_name: str) -> TicketEntity | None:
+    def get_ticket(self, ticket_name: str):
         try:
             query = Ticket.select().where(Ticket.ticket == ticket_name)
             ticket = query.dicts().get()
@@ -18,7 +18,7 @@ class MysqlServices(TicketInterface):
         except Exception as err:
             return None
         
-    def get_all_ticket(self) -> list[TicketEntity] | None: # Implementei sem testar
+    def get_all_ticket(self):
         try:
             query = Ticket.select()
             tickets = query.dicts().get()
@@ -40,7 +40,7 @@ class MysqlServices(TicketInterface):
             history =               ticket._history
         )
     
-    def update_ticket_sale(self, ticket_id: int, ticket: TicketEntity) -> None:
+    def update_ticket_sale(self, dataUpdated: TicketEntity) -> None:
         pass
     
     def update_ticket_increment(self, ticket: TicketEntity) -> None:
