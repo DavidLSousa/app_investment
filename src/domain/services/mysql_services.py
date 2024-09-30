@@ -62,4 +62,4 @@ class MysqlServices(TicketInterface):
         ).execute()
 
     def delete_ticket(self, ticket_id: int) -> None:
-        Ticket.delete().where(Ticket.id == ticket_id).execute()
+        Ticket.delete().where(Ticket.id == ticket_id).execute() # type: ignore
