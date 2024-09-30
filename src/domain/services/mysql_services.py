@@ -21,7 +21,7 @@ class MysqlServices(TicketInterface):
     def get_all_ticket(self):
         try:
             query = Ticket.select()
-            tickets = query.dicts().get()
+            tickets = list(query.dicts())
             
             return tickets
         
