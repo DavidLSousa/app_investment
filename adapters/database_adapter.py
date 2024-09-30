@@ -17,11 +17,9 @@ class DatabaseAdapter(TicketInterface):
     def create_ticket(self, ticket: TicketEntity):
         self.database.create_ticket(ticket)
     
-    def update_ticket(self, ticket_id: int, ticket: TicketEntity):
-        self.database.update_ticket(ticket_id, ticket)  
+    def update_ticket_sale(self, ticket_id: int, ticket: TicketEntity):
+        self.database.update_ticket_sale(ticket_id, ticket)  
     
     def update_ticket_increment(self, ticket: TicketEntity):
         self.database.update_ticket_increment(ticket)
-    
-    def delete_ticket(self, ticket_id: int):
-        self.database.delete_ticket(ticket_id)
+

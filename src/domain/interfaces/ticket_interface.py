@@ -16,13 +16,9 @@ class TicketInterface(ABC):
         pass
 
     @abstractmethod
-    def update_ticket(self, ticket_id: int, ticket: TicketEntity) -> None:
+    def update_ticket_sale(self, ticket_id: int, ticket: TicketEntity) -> None:
         pass
 
     @abstractmethod
     def update_ticket_increment(self, ticket: TicketEntity) -> None:
-        pass
-
-    @abstractmethod
-    def delete_ticket(self, ticket_id: int) -> None:
         pass

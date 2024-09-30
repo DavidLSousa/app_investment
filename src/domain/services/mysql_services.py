@@ -40,7 +40,7 @@ class MysqlServices(TicketInterface):
             history =               ticket._history
         )
     
-    def update_ticket(self, ticket_id: int, ticket: TicketEntity) -> None:
+    def update_ticket_sale(self, ticket_id: int, ticket: TicketEntity) -> None:
         pass
     
     def update_ticket_increment(self, ticket: TicketEntity) -> None:
@@ -54,6 +54,4 @@ class MysqlServices(TicketInterface):
         ).where(
             Ticket.ticket == ticket._ticket
         ).execute()
-    
-    def delete_ticket(self, ticket_id: int) -> None:
-        pass
+

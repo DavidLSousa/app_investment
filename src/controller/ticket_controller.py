@@ -9,6 +9,7 @@ from flask import (
 )
 from dataclasses import dataclass
 
+from adapters import database_adapter
 from src.schemas.ticket_schema import TicketSchema
 from adapters.database_adapter import DatabaseAdapter
 from src.domain.services.mysql_services import MysqlServices
@@ -91,6 +92,7 @@ class TicketController:
     def sale_ticket_controller(cls, ticker):
         try:
             print(f'Ticker edit:  {ticker}')
+            # database_adapter.update_ticket_sale(ticker)
 
             return { 'status': 200, 'success': 'Tudo certo' }
         
