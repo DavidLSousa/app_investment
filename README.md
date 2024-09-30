@@ -5,20 +5,17 @@
     [ ] Add novo campo para historico de transações;
 
 # Security
-    [ ] Sanitização de dados no python (backend)
+    [x] Sanitização de dados no python (backend)
         # Da pra fazer no front sem npm?
 
 # JS e Backend
 [ ] all_tickets_page
-    [ ] Carregar tickets do BD
+    [x] Carregar tickets do BD
 
-    [ ] Editar -> Deve ser apenas para venda de ativos?
-        # deve permitir do diminiuir o numero de ativos e informar o valor da venda?
-        # Como esse calculo é feito? O valor da venda vem do usuário ou de uma API?
 
     # Frontend
     [ ] .js -> rever o que o catch deve fazer;
-    [ ] html -> Mudar deleção e edição de tickets para um icone de carrinho de compras
+    [x] html -> Mudar deleção e edição de tickets para um icone de carrinho de compras
         # Deve abrir um popup onde vai pedir o numero de tickets vendidos e o valor total da venda
         # isso muda o js tbm
     [ ] popup de venda de ativos
@@ -50,10 +47,4 @@
 
 [ ] service deve ter um raise inves de return None?
 
-APIS:
-[x] Brapi
-    Para ações no Brasil
-[x] CoinGecko API
-    Para criptomoedas
-[x] yfinance
-    Para mercado americano
+[ ] Aplicar clen code nas APIs no ticket_controller
