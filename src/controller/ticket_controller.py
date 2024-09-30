@@ -89,10 +89,19 @@ class TicketController:
             return jsonify({'status': 500, 'error': 'Erro interno do servidor'}), 500
 
     @classmethod
-    def sale_ticket_controller(cls, ticker):
+    def sale_ticket_controller(cls, ticker): # Ajustar o front antes de qualquer coisa 
         try:
             print(f'Ticker edit:  {ticker}')
             # database_adapter.update_ticket_sale(ticker)
+                # Deve receber: 
+                    # ticker_id, 
+                    # number_of_sale_tickets, 
+                    # total_sale_value
+                # Isso deve atualizar o ticket
+                    # Precisa salvar a venda no historico?
+                        # Seria add com a quatidade de tickets negativa para indicar venda?
+                        # Ou o obj do dict deve ser diferente ?
+                            # { number_of_sale_tickets, total_sale_value, date }
 
             return { 'status': 200, 'success': 'Tudo certo' }
         
