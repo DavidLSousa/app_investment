@@ -1,3 +1,4 @@
+import bleach
 import os, datetime, requests, traceback
 import yfinance as yf
 
@@ -28,7 +29,6 @@ class TicketController:
             if tickets is None:
                 raise ValueError('Nenhum ticket encontrado')
             
-            current_app.logger.debug(f'TICKETS: {tickets}')
             tickets_formatted = cls.__format_tickets_for_page(tickets)
 
             return render_template('all_tickets_page.html', title_page='Meus Ativos', tickets=tickets_formatted)
@@ -79,20 +79,9 @@ class TicketController:
             if not req.json:
                 raise ValueError("Dados JSON não fornecidos")
             
-            schema = TicketSoldSchema()
-            data = schema.load(req.json)
+            sanitazed_data = cls.__sanitize_data_sale_ticket(req.json)
 
-            if data is None:
-                raise ValueError("Dados JSON não fornecidos")
-            
-            dataJson = {
-                'ticket': data[0],
-                'number_of_sale_tickets': data[1],
-                'total_sale_value': data[2],
-                'date': cls.__get_datetime()
-            }
-
-            db_ticket = cls.database_adapter.get_ticket(dataJson['ticket'])
+            db_ticket = cls.database_adapter.get_ticket(sanitazed_data['ticket'])
             
             if db_ticket is None:
                 raise ValueError('Ticket não encontrado')
@@ -100,15 +89,15 @@ class TicketController:
             updated_ticket = TicketEntity(
                 _nameTicket=            db_ticket['nameTicket'],
                 _ticket=                db_ticket['ticket'],
-                _number_of_tickets=     db_ticket['number_of_tickets'] - dataJson['number_of_sale_tickets'],
-                _total_value_purchased= db_ticket['total_value_purchased'] - dataJson['total_sale_value'],
+                _number_of_tickets=     db_ticket['number_of_tickets'] - int(sanitazed_data['number_of_sale_tickets']),
+                _total_value_purchased= db_ticket['total_value_purchased'] - float(sanitazed_data['total_sale_value']),
                 _highest_price=         db_ticket['highest_price'],
                 _lowest_price=          db_ticket['lowest_price'],
                 _average_price=         db_ticket['average_price'],
-                _history=               db_ticket['history'] + [
+                _history=               eval(db_ticket['history'])  + [
                     {
-                        'number_of_sale_tickets': dataJson['number_of_sale_tickets'],
-                        'total_sale_value': dataJson['total_sale_value'],
+                        'number_of_sale_tickets': int(sanitazed_data['number_of_sale_tickets']),
+                        'total_sale_value': float(sanitazed_data['total_sale_value']),
                         'date': cls.__get_datetime()
                     }
                 ]
@@ -155,7 +144,6 @@ class TicketController:
     def __handle_update_ticket(cls, new_ticket, db_ticket) -> None:
         updated_number_of_tickets = int(db_ticket['number_of_tickets']) + int(new_ticket['number_of_tickets'])
         updated_total_value_purchased = float(db_ticket['total_value_purchased']) + float(new_ticket['total_value_purchased'])
-        db_history = eval(db_ticket['history']) 
 
         price_metrics = cls.__get_price_metrics(new_ticket, db_ticket)
 
@@ -167,7 +155,7 @@ class TicketController:
             _highest_price=         price_metrics['highest_price'],
             _lowest_price=          price_metrics['lowest_price'],
             _average_price=         price_metrics['average_price'],
-            _history=               db_history + [
+            _history=               eval(db_ticket['history']) + [
                 {
                     'qntTickets': new_ticket['number_of_tickets'],
                     'valuePerTicket': float(new_ticket['total_value_purchased']) / int(new_ticket['number_of_tickets']),
@@ -272,3 +260,14 @@ class TicketController:
             return None
         except Exception as err:
             raise ValueError(f"Erro ao usar a API CoinGecko: {str(err)}")
+
+    # ================================ Validations ================================ #
+    @classmethod
+    def __sanitize_data_sale_ticket(cls, dataJson):
+        dataJsonSanatized = {
+            'ticket': bleach.clean(dataJson['ticket']),
+            'number_of_sale_tickets': bleach.clean(str(dataJson['number_of_sale_tickets'])),
+            'total_sale_value': bleach.clean(str(dataJson['total_sale_value']))
+        }
+
+        return dataJsonSanatized
