@@ -1,7 +1,3 @@
-/*
-[ ] Acionar os routers(fecth) quando for clicado para editar ou deletar
-*/
-
 const ticketForm = document.querySelector('[data-js="ticket-form"]');
 const ticketFields = document.querySelector('[data-js="ticket-fields"]');
 const addTicketButton = document.querySelector('[data-js="add-ticket"]');
@@ -56,26 +52,26 @@ const addTicket = () => {
 }
 
 const showPopupRes = data => {
-  const createPopup = (status) => {
-    const popup = document.createElement('div');
-    popup.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg';
+    const createPopup = (status) => {
+        const popup = document.createElement('div');
+        popup.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg';
+        
+        if (status === 200) {
+        popup.classList.add('bg-green-500', 'text-white');
+        popup.textContent = 'Adição bem-sucedida!';
+        } else {
+        popup.classList.add('bg-red-500', 'text-white');
+        popup.textContent = 'Erro na adição.';
+        }
     
-    if (status === 200) {
-      popup.classList.add('bg-green-500', 'text-white');
-      popup.textContent = 'Adição bem-sucedida!';
-    } else {
-      popup.classList.add('bg-red-500', 'text-white');
-      popup.textContent = 'Erro na adição.';
+        return popup
     }
-  
-    return popup
-  }
 
-  const popup = createPopup(data.status)
+    const popup = createPopup(data.status)
 
-  document.body.appendChild(popup);
+    document.body.appendChild(popup);
 
-  setTimeout(() => { popup.remove(); }, 3000);
+    setTimeout(() => { popup.remove(); }, 3000);
 }
 
 const buildJson = ticketGroups => {
