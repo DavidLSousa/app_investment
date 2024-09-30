@@ -21,39 +21,23 @@ class TicketController:
     database_adapter = DatabaseAdapter(database=MysqlServices())
 
     @classmethod
-    def render_all_page(cls): # implementar isso para poder testar a sale_ticket_controller
-        test = [
-            {
-                'ticket': 'ITSA4',
-                'nameTicket': 'Itausa',
-                'average_price': 8.51,
-                'number_of_tickets': 55,
-                'total_value_purchased': 602.25
-            },
-            {
-                'ticket': 'PETR3',
-                'nameTicket': 'Petrobras',
-                'average_price': 30.00,
-                'number_of_tickets': 20,
-                'total_value_purchased': 600.00
-            },
-            {
-                'ticket': 'VALE3',
-                'nameTicket': 'Vale',
-                'average_price': 75.00,
-                'number_of_tickets': 10,
-                'total_value_purchased': 750.00
-            }
-        ]
-
+    def render_all_page(cls):
         try:
-            return render_template('all_tickets_page.html', title_page='Meus Ativos', tickets=test)
+            tickets = cls.database_adapter.get_all_ticket()
+
+            if tickets is None:
+                raise ValueError('Nenhum ticket encontrado')
+            
+            current_app.logger.debug(f'TICKETS: {tickets}')
+            tickets_formatted = cls.__format_tickets_for_page(tickets)
+
+            return render_template('all_tickets_page.html', title_page='Meus Ativos', tickets=tickets_formatted)
         
         except ValueError as err:
             stack_trace = traceback.format_exc()
             current_app.logger.error(f'ERRO render_all_page: {stack_trace}')
             return jsonify({'error': 'Erro interno do servidor'}), 500
-    
+
     @classmethod
     def render_add_page(cls):
         try:
@@ -223,6 +207,22 @@ class TicketController:
     @classmethod
     def __get_datetime(cls):
         return datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+
+    @classmethod
+    def __format_tickets_for_page(cls, tickets):
+        formatted_tickets = []
+        for ticket in tickets:
+            formatted_ticket = {
+                'ticket': ticket['ticket'],
+                'nameTicket': ticket['nameTicket'],
+                'highest_price': "{:.2f}".format(float(ticket['highest_price'])),
+                'lowest_price': "{:.2f}".format(float(ticket['lowest_price'])),
+                'average_price': "{:.2f}".format(float(ticket['average_price'])),
+                'number_of_tickets': ticket['number_of_tickets'],
+                'total_value_purchased': "{:.2f}".format(float(ticket['total_value_purchased']))
+            }
+            formatted_tickets.append(formatted_ticket)
+        return formatted_tickets
 
     # ================================ APIs ================================= #
     @classmethod
