@@ -10,9 +10,6 @@ from flask import (
 )
 from dataclasses import dataclass
 
-from src.schemas.ticket_sold_schema import TicketSoldSchema
-from src.schemas.ticket_schema import TicketSchema
-
 from adapters.database_adapter import DatabaseAdapter
 from src.domain.services.mysql_services import MysqlServices
 from src.domain.entities.ticket_entity import TicketEntity
@@ -54,19 +51,19 @@ class TicketController:
             if not req.json:
                 raise ValueError("Dados JSON não fornecidos")
 
-            schema = TicketSchema(many=True)
-            dataJson = schema.load(req.json)
 
-            if dataJson is not None:
-                for current_ticket in dataJson:
-                    check_ticket_in_db = cls.database_adapter.get_ticket(current_ticket['ticket'])
+            if req.json is not None:
+                for current_ticket in req.json:
+                    sanitize_data = cls.__sanitize_data_add_ticket(current_ticket)
+
+                    check_ticket_in_db = cls.database_adapter.get_ticket(sanitize_data['ticket'])
                     
                     if check_ticket_in_db is None:
-                        cls.__handle_create_ticket(current_ticket)
+                        cls.__handle_create_ticket(sanitize_data)
                     else:
-                        cls.__handle_update_ticket(current_ticket, check_ticket_in_db)
+                        cls.__handle_update_ticket(sanitize_data, check_ticket_in_db)
 
-            return jsonify({'success': 'Tudo certo'}), 200
+            return jsonify({'status': 200, 'success': 'Tudo certo'}), 200
         
         except Exception as err:
             stack_trace = traceback.format_exc()
@@ -86,10 +83,15 @@ class TicketController:
             if db_ticket is None:
                 raise ValueError('Ticket não encontrado')
             
+            number_of_tickets_updated = int(db_ticket['number_of_tickets']) - int(sanitazed_data['number_of_sale_tickets'])
+            if number_of_tickets_updated == 0: 
+                cls.database_adapter.delete_ticket(db_ticket['id'])
+                return jsonify({'status': 200, 'success': 'Tudo certo' }), 200
+            
             updated_ticket = TicketEntity(
                 _nameTicket=            db_ticket['nameTicket'],
                 _ticket=                db_ticket['ticket'],
-                _number_of_tickets=     db_ticket['number_of_tickets'] - int(sanitazed_data['number_of_sale_tickets']),
+                _number_of_tickets=     number_of_tickets_updated,
                 _total_value_purchased= db_ticket['total_value_purchased'] - float(sanitazed_data['total_sale_value']),
                 _highest_price=         db_ticket['highest_price'],
                 _lowest_price=          db_ticket['lowest_price'],
@@ -105,7 +107,7 @@ class TicketController:
 
             cls.database_adapter.update_ticket_sale(updated_ticket)
 
-            return jsonify({ 'success': 'Tudo certo' }), 200
+            return jsonify({'status': 200, 'success': 'Tudo certo' }), 200
         
         except ValueError as err:
             stack_trace = traceback.format_exc()
@@ -268,6 +270,16 @@ class TicketController:
             'ticket': bleach.clean(dataJson['ticket']),
             'number_of_sale_tickets': bleach.clean(str(dataJson['number_of_sale_tickets'])),
             'total_sale_value': bleach.clean(str(dataJson['total_sale_value']))
+        }
+
+        return dataJsonSanatized
+
+    @classmethod
+    def __sanitize_data_add_ticket(cls, dataJson):
+        dataJsonSanatized = {
+            'ticket': bleach.clean(dataJson['ticket']),
+            'number_of_tickets': bleach.clean(str(dataJson['number_of_tickets'])),
+            'total_value_purchased': bleach.clean(str(dataJson['total_value_purchased']))
         }
 
         return dataJsonSanatized
