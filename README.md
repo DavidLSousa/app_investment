@@ -21,6 +21,8 @@
     [ ] html -> Mudar deleção e edição de tickets para um icone de carrinho de compras
         # Deve abrir um popup onde vai pedir o numero de tickets vendidos e o valor total da venda
         # isso muda o js tbm
+    [ ] popup de venda de ativos
+        [ ] o valor de venda pode ser maior do que oq esta na tabela?
     
     [ ] Manter um historico de compras e vendas?
         # Caso seja feita uma trasação errada e queira reverter
