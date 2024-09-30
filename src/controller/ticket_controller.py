@@ -1,6 +1,5 @@
 import bleach
-import os, datetime, requests, traceback
-import yfinance as yf
+import datetime, traceback
 
 from flask import (
     current_app,
@@ -11,12 +10,17 @@ from flask import (
 from dataclasses import dataclass
 
 from adapters.database_adapter import DatabaseAdapter
+from adapters.name_provider_adapter import NameProviderAdapter
+
+from src.domain.services.name_provider_service import NameProviderService
 from src.domain.services.mysql_services import MysqlServices
+
 from src.domain.entities.ticket_entity import TicketEntity
 
 @dataclass
 class TicketController:
     database_adapter = DatabaseAdapter(database=MysqlServices())
+    info_fetcher_adapter = NameProviderAdapter(fetcher_service=NameProviderService())
 
     @classmethod
     def render_all_page(cls):
@@ -124,7 +128,7 @@ class TicketController:
         price_metrics = cls.__get_price_metrics(current_ticket)
 
         new_ticket = TicketEntity(
-            _nameTicket=            cls.__get_ticket_name_api(current_ticket),
+            _nameTicket=            cls.info_fetcher_adapter.get_ticket_name_api(current_ticket),
             _ticket=                ticket,
             _number_of_tickets=     number_of_tickets,
             _total_value_purchased= total_value_purchased,
@@ -213,55 +217,6 @@ class TicketController:
             }
             formatted_tickets.append(formatted_ticket)
         return formatted_tickets
-
-    # ================================ APIs ================================= #
-    @classmethod
-    def __get_ticket_name_api(cls, current_ticket) -> str:
-        apis = [
-            cls.__use_yfinance,
-            cls.__use_brapi,
-            cls.__use_goingecko
-        ]
-        
-        for api_func in apis:
-            ticket_name = api_func(current_ticket['ticket'])
-            if ticket_name is not None:
-                return ticket_name
-        
-        raise ValueError('Ticket não encontrado')
-
-    @classmethod
-    def __use_yfinance(cls, ticket_name,) -> str | None:
-        ticker = yf.Ticker(ticket_name)
-        ticketName = ticker.info.get('longName')
-
-        return ticketName
-
-    @classmethod
-    def __use_brapi(cls, ticket_name) -> str | None:
-        try:
-            url = f"https://brapi.dev/api/quote/{ticket_name}?token={os.getenv('BRAPI_TOKEN')}"
-            response = requests.get(url)
-            data = response.json()
-            
-            if 'results' in data and len(data['results']) > 0:
-                return data['results'][0].get('longName')
-            return None
-        except Exception as err:
-            raise ValueError(f"Erro ao usar a API Brapi: {str(err)}")
-
-    @classmethod
-    def __use_goingecko(cls, ticket_name) -> str | None:
-        try:
-            url = f"https://api.coingecko.com/api/v3/coins/{ticket_name.lower()}"
-            response = requests.get(url)
-            data = response.json()
-            
-            if 'name' in data:
-                return data['name']
-            return None
-        except Exception as err:
-            raise ValueError(f"Erro ao usar a API CoinGecko: {str(err)}")
 
     # ================================ Validations ================================ #
     @classmethod
