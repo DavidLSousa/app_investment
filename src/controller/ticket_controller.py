@@ -1,6 +1,6 @@
+import os, datetime, requests, traceback
 import yfinance as yf
-import datetime 
-import traceback
+
 from flask import (
     current_app,
     render_template,
@@ -10,7 +10,6 @@ from flask import (
 from dataclasses import dataclass
 
 from src.schemas.ticket_schema import TicketSchema
-
 from adapters.database_adapter import DatabaseAdapter
 from src.domain.services.mysql_services import MysqlServices
 from src.domain.entities.ticket_entity import TicketEntity
@@ -112,7 +111,7 @@ class TicketController:
             current_app.logger.error(f'ERRO edit_ticket_controller: {stack_trace}')
             return {'status': 500, 'error': 'Erro interno do servidor'}
 
-    # ============================ Private methods ============================ #
+    # =========================== Private methods =========================== #
     @classmethod
     def __handle_create_ticket(cls, current_ticket) -> None:
         ticket = str(current_ticket['ticket'])
@@ -139,7 +138,7 @@ class TicketController:
         )
 
         cls.database_adapter.create_ticket(new_ticket)
-    
+
     @classmethod
     def __handle_update_ticket(cls, new_ticket, db_ticket) -> None:
         updated_number_of_tickets = int(db_ticket['number_of_tickets']) + int(new_ticket['number_of_tickets'])
@@ -166,17 +165,7 @@ class TicketController:
         )
 
         cls.database_adapter.update_ticket_increment(updated_ticket)
-    
-    @classmethod
-    def __get_ticket_name_api(cls, current_ticket) -> str: # Implementar para outras APIs
-        ticker = yf.Ticker(current_ticket['ticket'])
-        ticketName = ticker.info.get('longName')
 
-        if ticketName == None:
-            raise ValueError('Ticket não encontrado')
-
-        return ticketName
-    
     @classmethod
     def __get_price_metrics(cls, new_ticket, db_ticket=None) -> dict[str, float]:
         new_total_value_purchased = float(new_ticket['total_value_purchased'])
@@ -203,12 +192,51 @@ class TicketController:
             'lowest_price': lowest_price
         }
 
-'''
-APIS:
-[ ] Brapi
-    Para ações no Brasil
-[ ] CoinGecko API
-    Para criptomoedas
-[ ] yfinance
-    Para mercado americano
-'''
+    # ================================ APIs ================================= #
+    @classmethod
+    def __get_ticket_name_api(cls, current_ticket) -> str:
+        apis = [
+            cls.__use_yfinance,
+            cls.__use_brapi,
+            cls.__use_goingecko
+        ]
+        
+        for api_func in apis:
+            ticket_name = api_func(current_ticket['ticket'])
+            if ticket_name is not None:
+                return ticket_name
+        
+        raise ValueError('Ticket não encontrado')
+
+    @classmethod
+    def __use_yfinance(cls, ticket_name,) -> str | None:
+        ticker = yf.Ticker(ticket_name)
+        ticketName = ticker.info.get('longName')
+
+        return ticketName
+
+    @classmethod
+    def __use_brapi(cls, ticket_name) -> str | None:
+        try:
+            url = f"https://brapi.dev/api/quote/{ticket_name}?token={os.getenv('BRAPI_TOKEN')}"
+            response = requests.get(url)
+            data = response.json()
+            
+            if 'results' in data and len(data['results']) > 0:
+                return data['results'][0].get('longName')
+            return None
+        except Exception as err:
+            raise ValueError(f"Erro ao usar a API Brapi: {str(err)}")
+
+    @classmethod
+    def __use_goingecko(cls, ticket_name) -> str | None:
+        try:
+            url = f"https://api.coingecko.com/api/v3/coins/{ticket_name.lower()}"
+            response = requests.get(url)
+            data = response.json()
+            
+            if 'name' in data:
+                return data['name']
+            return None
+        except Exception as err:
+            raise ValueError(f"Erro ao usar a API CoinGecko: {str(err)}")
