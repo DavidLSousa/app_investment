@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from flask import current_app
-
 from src.domain.entities.ticket_entity import TicketEntity
 from src.domain.interfaces.ticket_interface import TicketInterface
 from models import Ticket

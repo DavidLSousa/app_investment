@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 from src.domain.entities.ticket_entity import TicketEntity
-from src.domain.services.mysql_services import MysqlServices
 from src.domain.interfaces.ticket_interface import TicketInterface
 
 @dataclass
