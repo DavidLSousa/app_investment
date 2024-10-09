@@ -15,6 +15,14 @@ class MysqlServices(TicketInterface):
         
         except Exception as err:
             return None
+    # class TicketNotFoundError(Exception):
+    #     pass
+
+    # def get_ticket(ticket_id: int) -> TicketEntity:
+    #     ticket = find_ticket_in_database(ticket_id)  # Supondo que essa função busque o ticket
+    #     if ticket is None:
+    #         raise TicketNotFoundError(f'Ticket com ID {ticket_id} não encontrado.')
+    #     return ticket
         
     def get_all_ticket(self):
         try:
