@@ -3,6 +3,8 @@
 
 # Security
 
+# Tests
+[ ] Checar se os tests estão corretos
 
 
 # JS e Backend
@@ -10,7 +12,7 @@
     # Frontend
     [ ] .js -> rever o que o catch deve fazer;
     [ ] popup de venda de ativos
-        [ ] o valor de venda pode ser maior do que oq esta na tabela?
+        [ ] o valor de venda pode ser maior do que oq esta na tabela? 
     
     [ ] Add novo campo para historico de transações;
         # Caso seja feita uma trasação errada e queira reverter (ctrl+z)
@@ -36,6 +38,7 @@
             MGS = f'Erro ao add o {ticket}!'
             MGS = f'Erro ao atualizar o {ticket}!'
 
-[ ] service deve ter um raise inves de return None?
+[ ] service deve ter um raise inves de return None? 
+    # Sim
 
 [ ] Aplicar clen code nas APIs no ticket_controller
