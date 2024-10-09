@@ -32,17 +32,22 @@ class TicketController:
             
             tickets_formatted = cls.__format_tickets_for_page(tickets)
 
-            return render_template('all_tickets_page.html', title_page='Meus Ativos', tickets=tickets_formatted)
+            return render_template('all_tickets_page.html', title_page='Meus Ativos', tickets=tickets_formatted), 200
         
         except ValueError as err:
             stack_trace = traceback.format_exc()
             current_app.logger.error(f'ERRO render_all_page: {stack_trace}')
+            return jsonify({'error': str(err)}), 500  
+
+        except Exception as e:
+            stack_trace = traceback.format_exc()
+            current_app.logger.error(f'ERRO inesperado em render_all_page: {stack_trace}')
             return jsonify({'error': 'Erro interno do servidor'}), 500
 
     @classmethod
     def render_add_page(cls):
         try:
-            return render_template('add_tickets_page.html', title_page='Adicionar Ativos')
+            return render_template('add_tickets_page.html', title_page='Adicionar Ativos'), 200
         
         except ValueError as err:
             stack_trace = traceback.format_exc()
