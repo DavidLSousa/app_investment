@@ -1,6 +1,7 @@
 const ticketForm = document.querySelector('[data-js="ticket-form"]');
 const ticketFields = document.querySelector('[data-js="ticket-fields"]');
 const addTicketButton = document.querySelector('[data-js="add-ticket"]');
+const submitTicketButton = document.querySelector('[data-js="submit-ticket"]');
 
 let ticketCount = 1;
 
@@ -90,6 +91,9 @@ const buildJson = ticketGroups => {
 const handleSubmitForm = async event => {
     event.preventDefault();
 
+    submitTicketButton.textContent = 'Enviando...'
+    submitTicketButton.disabled = true
+
     const ticketGroups = Array.from(ticketFields.querySelectorAll('.ticket-group'));
     const jsonData = buildJson(ticketGroups)
     
@@ -105,6 +109,9 @@ const handleSubmitForm = async event => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
         const data = await res.json();
+
+        submitTicketButton.textContent = 'Adicionar'
+        submitTicketButton.disabled = false
         
         showPopupRes(data)
 
