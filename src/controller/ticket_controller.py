@@ -15,6 +15,7 @@ from adapters.name_provider_adapter import NameProviderAdapter
 from src.domain.services.name_provider_service import NameProviderService
 from src.domain.services.mysql_services import MysqlServices
 
+from src.domain.exceptions.tickets_exceptions import TicketNotFoundError
 from src.domain.entities.ticket_entity import TicketEntity
 
 @dataclass
@@ -26,9 +27,6 @@ class TicketController:
     def render_all_page(cls):
         try:
             tickets = cls.database_adapter.get_all_ticket()
-
-            if tickets is None:
-                raise ValueError('Nenhum ticket encontrado')
             
             tickets_formatted = cls.__format_tickets_for_page(tickets)
 
@@ -65,12 +63,13 @@ class TicketController:
                 for current_ticket in req.json:
                     sanitize_data = cls.__sanitize_data_add_ticket(current_ticket)
 
-                    check_ticket_in_db = cls.database_adapter.get_ticket(sanitize_data['ticket'])
+                    try:
+                        check_ticket_in_db = cls.database_adapter.get_ticket(sanitize_data['ticket'])
                     
-                    if check_ticket_in_db is None:
-                        cls.__handle_create_ticket(sanitize_data)
-                    else:
                         cls.__handle_update_ticket(sanitize_data, check_ticket_in_db)
+                    except TicketNotFoundError:
+                        cls.__handle_create_ticket(sanitize_data)
+
 
             return jsonify({'status': 200, 'success': 'Tudo certo'}), 200
         
@@ -89,58 +88,58 @@ class TicketController:
 
             db_ticket = cls.database_adapter.get_ticket(sanitazed_data['ticket'])
             
-            if db_ticket is None:
-                raise ValueError('Ticket não encontrado')
-            
-            number_of_tickets_updated = int(db_ticket['number_of_tickets']) - int(sanitazed_data['number_of_sale_tickets'])
+            number_of_tickets_updated = int(db_ticket.number_of_tickets) - int(sanitazed_data['number_of_sale_tickets'])
             if number_of_tickets_updated == 0: 
-                cls.database_adapter.delete_ticket(db_ticket['id'])
+                cls.database_adapter.delete_ticket(db_ticket.nameTicket)
                 return jsonify({'status': 200, 'success': 'Tudo certo' }), 200
-            
+
             updated_ticket = TicketEntity(
-                _nameTicket=            db_ticket['nameTicket'],
-                _ticket=                db_ticket['ticket'],
+                nameTicket=             db_ticket.nameTicket,
+                ticket=                 db_ticket.ticket,
                 _number_of_tickets=     number_of_tickets_updated,
-                _total_value_purchased= db_ticket['total_value_purchased'] - float(sanitazed_data['total_sale_value']),
-                _highest_price=         db_ticket['highest_price'],
-                _lowest_price=          db_ticket['lowest_price'],
-                _average_price=         db_ticket['average_price'],
-                _history=               eval(db_ticket['history'])  + [
-                    {
-                        'number_of_sale_tickets': int(sanitazed_data['number_of_sale_tickets']),
-                        'total_sale_value': float(sanitazed_data['total_sale_value']),
-                        'date': cls.__get_datetime()
-                    }
-                ]
+                _total_value_purchased= db_ticket.total_value_purchased - float(sanitazed_data['total_sale_value']),
+                _highest_price=         db_ticket._highest_price,
+                _lowest_price=          db_ticket._lowest_price,
+                _average_price=         db_ticket._average_price,
+                history=                eval(db_ticket.history) + [{ # type: ignore
+                    'number_of_sale_tickets': int(sanitazed_data['number_of_sale_tickets']),
+                    'total_sale_value': float(sanitazed_data['total_sale_value']),
+                    'date': cls.__get_datetime()
+                }]
             )
 
             cls.database_adapter.update_ticket_sale(updated_ticket)
 
             return jsonify({'status': 200, 'success': 'Tudo certo' }), 200
-        
+
         except ValueError as err:
+            stack_trace = traceback.format_exc()
+            current_app.logger.error(f'ValueError edit_ticket_controller: {stack_trace}')
+            return jsonify({'error': str(err)}), 500
+        
+        except Exception:
             stack_trace = traceback.format_exc()
             current_app.logger.error(f'ERRO edit_ticket_controller: {stack_trace}')
             return jsonify({'error': 'Erro interno do servidor'}), 500
 
     # =========================== Private methods =========================== #
     @classmethod
-    def __handle_create_ticket(cls, current_ticket) -> None:
-        ticket = str(current_ticket['ticket'])
-        number_of_tickets = int(current_ticket['number_of_tickets'])
-        total_value_purchased = float(current_ticket['total_value_purchased'])
+    def __handle_create_ticket(cls, current_data_ticket) -> None:
+        ticket = str(current_data_ticket['ticket'])
+        number_of_tickets = int(current_data_ticket['number_of_tickets'])
+        total_value_purchased = float(current_data_ticket['total_value_purchased'])
 
-        price_metrics = cls.__get_price_metrics(current_ticket)
+        price_metrics = cls.__get_price_metrics(current_data_ticket)
 
         new_ticket = TicketEntity(
-            _nameTicket=            cls.info_fetcher_adapter.get_ticket_name_api(current_ticket),
-            _ticket=                ticket,
+            nameTicket=             cls.info_fetcher_adapter.get_ticket_name_api(current_data_ticket),
+            ticket=                 ticket,
             _number_of_tickets=     number_of_tickets,
             _total_value_purchased= total_value_purchased,
             _highest_price=         price_metrics['highest_price'],
             _lowest_price=          price_metrics['lowest_price'],
             _average_price=         price_metrics['average_price'],
-            _history=[
+            history=[
                 {
                     'qntTickets': number_of_tickets,
                     'valuePerTicket': total_value_purchased / number_of_tickets,
@@ -152,24 +151,24 @@ class TicketController:
         cls.database_adapter.create_ticket(new_ticket)
 
     @classmethod
-    def __handle_update_ticket(cls, new_ticket, db_ticket) -> None:
-        updated_number_of_tickets = int(db_ticket['number_of_tickets']) + int(new_ticket['number_of_tickets'])
-        updated_total_value_purchased = float(db_ticket['total_value_purchased']) + float(new_ticket['total_value_purchased'])
+    def __handle_update_ticket(cls, new_data_ticket: dict, db_ticket: TicketEntity) -> None:
+        updated_number_of_tickets = int(db_ticket.number_of_tickets) + int(new_data_ticket['number_of_tickets'])
+        updated_total_value_purchased = float(db_ticket.total_value_purchased) + float(new_data_ticket['total_value_purchased'])
 
-        price_metrics = cls.__get_price_metrics(new_ticket, db_ticket)
+        price_metrics = cls.__get_price_metrics(new_data_ticket, db_ticket)
 
         updated_ticket = TicketEntity(
-            _nameTicket=            db_ticket['nameTicket'],
-            _ticket=                db_ticket['ticket'],
+            nameTicket=             db_ticket.nameTicket,
+            ticket=                 db_ticket.ticket,
             _number_of_tickets=     updated_number_of_tickets,
             _total_value_purchased= updated_total_value_purchased,
             _highest_price=         price_metrics['highest_price'],
             _lowest_price=          price_metrics['lowest_price'],
             _average_price=         price_metrics['average_price'],
-            _history=               eval(db_ticket['history']) + [
+            history=                eval(db_ticket.history) + [ # type: ignore
                 {
-                    'qntTickets': new_ticket['number_of_tickets'],
-                    'valuePerTicket': float(new_ticket['total_value_purchased']) / int(new_ticket['number_of_tickets']),
+                    'qntTickets': new_data_ticket['number_of_tickets'],
+                    'valuePerTicket': float(new_data_ticket['total_value_purchased']) / int(new_data_ticket['number_of_tickets']),
                     'date': cls.__get_datetime()
                 }
             ]
@@ -178,9 +177,13 @@ class TicketController:
         cls.database_adapter.update_ticket_increment(updated_ticket)
 
     @classmethod
-    def __get_price_metrics(cls, new_ticket, db_ticket=None) -> dict[str, float]:
-        new_total_value_purchased = float(new_ticket['total_value_purchased'])
-        new_number_of_tickets = float(new_ticket['number_of_tickets'])
+    def __get_price_metrics(
+        cls, 
+        new_data_ticket: dict, 
+        db_ticket: TicketEntity | None = None
+    ) -> dict[str, float]:
+        new_total_value_purchased = float(new_data_ticket['total_value_purchased'])
+        new_number_of_tickets = float(new_data_ticket['number_of_tickets'])
         new_price = new_total_value_purchased / new_number_of_tickets
 
         if db_ticket is None:
@@ -190,12 +193,12 @@ class TicketController:
                 'lowest_price': new_price
             }
         
-        total_tickets = db_ticket['number_of_tickets'] + new_number_of_tickets
-        total_value_purchased = db_ticket['total_value_purchased'] + new_total_value_purchased
+        total_tickets = db_ticket.number_of_tickets + new_number_of_tickets
+        total_value_purchased = db_ticket.total_value_purchased + new_total_value_purchased
         new_average_price = total_value_purchased / total_tickets
         
-        highest_price = max(db_ticket['highest_price'], new_price)
-        lowest_price = min(db_ticket['lowest_price'], new_price)
+        highest_price = max(db_ticket._highest_price, new_price)
+        lowest_price = min(db_ticket._lowest_price, new_price)
 
         return {
             'average_price': new_average_price,
@@ -208,21 +211,24 @@ class TicketController:
         return datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 
     @classmethod
-    def __format_tickets_for_page(cls, tickets):
+    def __format_tickets_for_page(cls, tickets: list[TicketEntity]) -> list[TicketEntity]:
         formatted_tickets = []
         for ticket in tickets:
-            formatted_ticket = {
-                'ticket': ticket['ticket'],
-                'nameTicket': ticket['nameTicket'],
-                'highest_price': "{:.2f}".format(float(ticket['highest_price'])),
-                'lowest_price': "{:.2f}".format(float(ticket['lowest_price'])),
-                'average_price': "{:.2f}".format(float(ticket['average_price'])),
-                'number_of_tickets': ticket['number_of_tickets'],
-                'total_value_purchased': "{:.2f}".format(float(ticket['total_value_purchased']))
-            }
+            formatted_ticket = TicketEntity(
+                nameTicket=             ticket.nameTicket,
+                ticket=                 ticket.ticket,
+                _number_of_tickets=     ticket.number_of_tickets,
+                _highest_price=         float("{:.2f}".format(float(ticket.highest_price))),
+                _lowest_price=          float("{:.2f}".format(float(ticket.lowest_price))),
+                _average_price=         float("{:.2f}".format(float(ticket.average_price))),
+                _total_value_purchased= float("{:.2f}".format(float(ticket.total_value_purchased))),
+                history=                []
+            )
+                
             formatted_tickets.append(formatted_ticket)
+            
         return formatted_tickets
-
+    
     # ================================ Validations ================================ #
     @classmethod
     def __sanitize_data_sale_ticket(cls, dataJson):
