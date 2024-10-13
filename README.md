@@ -6,7 +6,6 @@
 # Tests
 [ ] Checar se os tests estão corretos
 
-
 # JS e Backend
 [ ] all_tickets_page
     # Frontend
@@ -38,7 +37,10 @@
             MGS = f'Erro ao add o {ticket}!'
             MGS = f'Erro ao atualizar o {ticket}!'
 
+# Refatorar
 [ ] service deve ter um raise inves de return None? 
     # Sim
+    [ ] Precisa revisar o service, a iterface, o adapter e a forma com que o controler esta tratando tudo;
+    
 
 [ ] Aplicar clen code nas APIs no ticket_controller
