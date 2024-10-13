@@ -8,10 +8,11 @@ from src.domain.services.name_provider_service import NameProviderService
 class NameProviderAdapter(NameProviderInterface):
     fetcher_service: NameProviderService
 
-    def get_ticket_name_api(self, current_ticket):
-        return self.fetcher_service.get_ticket_name_api(current_ticket)
+    async def get_ticket_name_api(self, current_ticket):
+        return await self.fetcher_service.get_ticket_name_api(current_ticket)
 
     def use_yfinance(self, ticket_name):
+        
         return self.fetcher_service.use_yfinance(ticket_name)
 
     def use_brapi(self, ticket_name):

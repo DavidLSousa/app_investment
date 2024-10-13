@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class NameProviderInterface(ABC):
     @abstractmethod
-    def get_ticket_name_api(cls, current_ticket):
+    async def get_ticket_name_api(cls, current_ticket):
         pass
 
     @abstractmethod

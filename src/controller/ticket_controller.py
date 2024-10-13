@@ -1,3 +1,4 @@
+import asyncio
 import bleach
 import datetime, traceback
 
@@ -68,7 +69,7 @@ class TicketController:
                     
                         cls.__handle_update_ticket(sanitize_data, check_ticket_in_db)
                     except TicketNotFoundError:
-                        cls.__handle_create_ticket(sanitize_data)
+                        asyncio.run(cls.__handle_create_ticket(sanitize_data))
 
 
             return jsonify({'status': 200, 'success': 'Tudo certo'}), 200
@@ -124,15 +125,16 @@ class TicketController:
 
     # =========================== Private methods =========================== #
     @classmethod
-    def __handle_create_ticket(cls, current_data_ticket) -> None:
+    async def __handle_create_ticket(cls, current_data_ticket) -> None:
         ticket = str(current_data_ticket['ticket'])
         number_of_tickets = int(current_data_ticket['number_of_tickets'])
         total_value_purchased = float(current_data_ticket['total_value_purchased'])
 
         price_metrics = cls.__get_price_metrics(current_data_ticket)
+        name_ticket = await cls.info_fetcher_adapter.get_ticket_name_api(current_data_ticket)
 
         new_ticket = TicketEntity(
-            nameTicket=             cls.info_fetcher_adapter.get_ticket_name_api(current_data_ticket),
+            nameTicket=             name_ticket,
             ticket=                 ticket,
             _number_of_tickets=     number_of_tickets,
             _total_value_purchased= total_value_purchased,
