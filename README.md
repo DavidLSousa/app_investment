@@ -41,6 +41,12 @@
 [ ] service deve ter um raise inves de return None? 
     # Sim
     [ ] Precisa revisar o service, a iterface, o adapter e a forma com que o controler esta tratando tudo;
-    
+[ ] Preciso trabalhar com um id para deletar?
+    Ex:
+        class TicketEntity:
+            _id = peewee.AutoField(primary_key=True)
+            # ...
+[ ] Implementar o id pra ser gerado na minha classe
+[ ] TicketEntite, o def __post_init__ n funciona;
 
 [ ] Aplicar clen code nas APIs no ticket_controller
