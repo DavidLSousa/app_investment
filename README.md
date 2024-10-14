@@ -21,10 +21,6 @@
 
     [ ] .js -> rever o que o catch deve fazer;
 
-    # Frontend
-    [ ] html -> Btn de adicionar deve mudar enquanto aguarda o retorno do backend
-        # E voltar ao normal quando o retorno chega
-
 [ ] Ajustar retorno das mensagens a ser mostra no frontend vindo do backend a depender do que foi executado
     # Sucesso
         [ ] informar oq foi feito
@@ -46,7 +42,7 @@
         class TicketEntity:
             _id = peewee.AutoField(primary_key=True)
             # ...
-[ ] Implementar o id pra ser gerado na minha classe
+
 [ ] TicketEntite, o def __post_init__ n funciona;
 
-[ ] Aplicar clen code nas APIs no ticket_controller
+[ ] Load balance na requisção para apis para saber o nome do ticket?
