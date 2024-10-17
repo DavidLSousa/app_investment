@@ -49,4 +49,6 @@
 
 [ ] TicketEntite, o def __post_init__ n funciona;
 
+[ ] Com o ajax na main_page a pagina carregada do ajax, apos enviar o formnão é recarregada
+
 [ ] Load balance na requisção para apis para saber o nome do ticket?

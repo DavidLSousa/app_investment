@@ -26,3 +26,5 @@ navLinks.forEach((link) => {
         handleNavigation(url);
     });
 });
+
+handleNavigation('/tickets/all')

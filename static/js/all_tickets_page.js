@@ -55,7 +55,7 @@ const createPopup = (ticketName, currentValue = '') => {
 
                     setTimeout(() => {
                         closePopup();
-                        if (success) location.reload();
+                        if (success) window.parent.location.reload();
                     }, 2000);
                 }
             });
