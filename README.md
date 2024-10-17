@@ -2,6 +2,10 @@
 [ ] Paginas(n a main) devem ter uma seta para voltar pra pag anterior
 
 # Security
+[ ] Add page de 404 Page Not Found, para ser retornada quandoo controller retornar um erro 
+
+[ ] add dompurify na main_page?
+[ ] add dompurify no input add tickets
 
 # Tests
 [ ] Checar se os tests estão corretos
