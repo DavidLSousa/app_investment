@@ -16,8 +16,8 @@ const handleNavigation = async (url) => {
         console.error(error);
     }
 };
-  
-navLinks.forEach((link) => {
+
+const addListenersInLinks = (link) => {
     link.addEventListener('click', (event) => {
         event.preventDefault();
 
@@ -25,6 +25,9 @@ navLinks.forEach((link) => {
         
         handleNavigation(url);
     });
-});
+}
+  
+
+navLinks.forEach(addListenersInLinks);
 
 handleNavigation('/tickets/all')
