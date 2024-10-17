@@ -19,7 +19,6 @@ const handleNavigation = async (url) => {
 };
 
 const addListenersInLinks = (link) => {
-    console.log(link)
     link.addEventListener('click', (event) => {
         event.preventDefault();
 
