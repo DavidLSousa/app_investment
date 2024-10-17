@@ -3,39 +3,47 @@
 
 <head>
   {% include 'includes/head.html' %}
+
+  <script defer type="module" src="../static/js/main_page.js"></script>
+  <!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.2.9/purify.min.js"></script> -->
+
 </head>
 
 <body class="h-screen flex">
-  <!-- Menu Lateral Fixo -->
-  <nav class="w-1/6 bg-gray-300 p-4 fixed h-full flex flex-col justify-center">
-    <ul>
+  <nav class="w-1/6 bg-gray-300 p-4 fixed h-full flex flex-col">
+
+    <header class="w-full max-w-4xl mx-auto flex justify-center items-center py-8 mb-16">
+      <img src="../static/images/icon_preto.png" alt="icone" class="w-32 rounded-full shadow-lg">
+    </header>
+
+    <ul class="flex flex-col justify-center">
       <li class="mb-4">
-        <a href="tickets/add" target="contentFrame" class="block p-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">
+        <a data-js="link-pages" href="tickets/add" target="contentFrame" class="block p-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">
           Adicionar Ativo
         </a>
       </li>
       <li class="mb-4">
-        <a href="tickets/all" target="contentFrame" class="block p-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">
+        <a data-js="link-pages" href="tickets/all" target="contentFrame" class="block p-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">
           Gerenciar Ativos
         </a>
       </li>
       <li class="mb-4">
-        <a href="dashboard" target="contentFrame" class="block p-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">
+        <a data-js="link-pages" href="dashboard" target="contentFrame" class="block p-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">
           Dashboard
         </a>
       </li>
       <li class="mb-4">
-        <a href="news" target="contentFrame" class="block p-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">
+        <a data-js="link-pages" href="news" target="contentFrame" class="block p-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">
           Notícias
         </a>
       </li>
     </ul>
   </nav>
 
-  <!-- Conteúdo à direita -->
-  <section class="ml-[calc(100%/6)] w-4/5 p-6">
-    <iframe name="contentFrame" src="tickets/all" class="w-full h-full border-0"></iframe>
-  </section>
+  <section data-js="frame" class="ml-[calc(100%/6)] w-4/5 p-6">
+    <iframe data-js="content-frame" class="w-full h-full border-none"></iframe>
+</section>
+
 </body>
 
 </html>
