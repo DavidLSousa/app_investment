@@ -1,15 +1,16 @@
+import 'https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.2.9/purify.min.js';
+
 const contentFrame = document.querySelector('[data-js="content-frame"]');
 const navLinks = document.querySelectorAll('[data-js="link-pages"]');
 
 const handleNavigation = async (url) => {
     try {
-        const response = await fetch(url);
+        const sanitizeURL = DOMPurify.sanitize(url);
+        const response = await fetch(sanitizeURL);
 
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const html = await response.text();
-        // const cleanHTML = DOMPurify.sanitize(html);
-        // contentFrame.srcdoc = cleanHTML;
         contentFrame.srcdoc = html;
     
     } catch (error) {
@@ -18,6 +19,7 @@ const handleNavigation = async (url) => {
 };
 
 const addListenersInLinks = (link) => {
+    console.log(link)
     link.addEventListener('click', (event) => {
         event.preventDefault();
 

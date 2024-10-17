@@ -4,11 +4,16 @@
 # Security
 [ ] Add page de 404 Page Not Found, para ser retornada quandoo controller retornar um erro 
 
-[ ] add dompurify na main_page?
+[x] add dompurify na main_page?
 [ ] add dompurify no input add tickets
 
 # Tests
 [ ] Checar se os tests estão corretos
+
+# CDN
+ - DOMPurify
+ - Tailwind
+ [ ] Passar para npm? deno?
 
 # JS e Backend
 [ ] all_tickets_page
