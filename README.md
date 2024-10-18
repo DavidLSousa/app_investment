@@ -1,8 +1,5 @@
-# Template
-[ ] Paginas(n a main) devem ter uma seta para voltar pra pag anterior
-
 # Security
-[ ] Add page de 404 Page Not Found, para ser retornada quandoo controller retornar um erro 
+[ ] XSS 
 
 [x] add dompurify na main_page?
 [ ] add dompurify no input add tickets
@@ -18,9 +15,11 @@
 # JS e Backend
 [ ] all_tickets_page
     # Frontend
-    [ ] .js -> rever o que o catch deve fazer;
+    
     [ ] popup de venda de ativos
-        [ ] o valor de venda pode ser maior do que oq esta na tabela? 
+        [ ] O valor de venda pode ser zerado mesmo ainda tenho tickets na cartiera
+            # Pensar como validar isso, se currentValuePurchased for 0 vai vai dar mais pra vender
+            # gerar uma mgs de aviso?
     
     [ ] Add novo campo para historico de transações;
         # Caso seja feita uma trasação errada e queira reverter (ctrl+z)
@@ -28,7 +27,6 @@
 [ ] add_tickets_page
     [ ] Field quantidade e valor nao podem ser negativos
 
-    [ ] .js -> rever o que o catch deve fazer;
 
 [ ] Ajustar retorno das mensagens a ser mostra no frontend vindo do backend a depender do que foi executado
     # Sucesso
@@ -56,4 +54,7 @@
 
 [ ] Com o ajax na main_page a pagina carregada do ajax, apos enviar o formnão é recarregada
 
+[ ] .js -> rever o que o catch deve fazer;
+
+# Outros
 [ ] Load balance na requisção para apis para saber o nome do ticket?
