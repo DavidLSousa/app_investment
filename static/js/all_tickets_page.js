@@ -4,7 +4,7 @@ const createPopupElement = (TicketName, currentValue = '', currentValuePurchased
             <h3 class="text-lg font-bold mb-4">Vender Ações da ${TicketName}</h3>
             <form id="saleForm">
                 <input type="number" name="soldQuantity" class="w-full border rounded px-2 py-1 mb-4" placeholder="Número de ações vendidas" min="1"    max="${currentValue}" required>
-                <input type="number" name="totalSaleValue" class="w-full border rounded px-2 py-1 mb-4" placeholder="Valor total da venda"   min="0.01" step="0.01" max="${currentValuePurchased - 1}" required>
+                <input type="number" name="totalSaleValue" class="w-full border rounded px-2 py-1 mb-4" placeholder="Valor total da venda"   min="0.01" step="0.01" max="${currentValuePurchased}" required>
                 <div class="flex justify-between space-x-2 w-full">
                     <button type="button" class="cancel flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancelar</button>
                     <button type="submit" class="confirm flex-1 px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600">Vender</button>
