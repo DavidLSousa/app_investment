@@ -1,10 +1,10 @@
-const createPopupElement = (TicketName, currentValue = '') => {
+const createPopupElement = (TicketName, currentValue = '', currentValuePurchased = '') => {
     const popupHTML = `
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
             <h3 class="text-lg font-bold mb-4">Vender Ações da ${TicketName}</h3>
             <form id="saleForm">
-                <input type="number" name="soldQuantity" class="w-full border rounded px-2 py-1 mb-4" placeholder="Número de ações vendidas" min="1" max="${currentValue}" required>
-                <input type="number" name="totalSaleValue" class="w-full border rounded px-2 py-1 mb-4" placeholder="Valor total da venda" min="0.01" step="0.01" required>
+                <input type="number" name="soldQuantity" class="w-full border rounded px-2 py-1 mb-4" placeholder="Número de ações vendidas" min="1"    max="${currentValue}" required>
+                <input type="number" name="totalSaleValue" class="w-full border rounded px-2 py-1 mb-4" placeholder="Valor total da venda"   min="0.01" step="0.01" max="${currentValuePurchased - 1}" required>
                 <div class="flex justify-between space-x-2 w-full">
                     <button type="button" class="cancel flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancelar</button>
                     <button type="submit" class="confirm flex-1 px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600">Vender</button>
@@ -19,9 +19,9 @@ const createPopupElement = (TicketName, currentValue = '') => {
     return wrapper;
 };
 
-const createPopup = (ticketName, currentValue = '') => {
+const createPopup = (ticketName, currentValue = '', currentValuePurchased = '') => {
     return new Promise((resolve) => {
-        const popup = createPopupElement(ticketName, currentValue);
+        const popup = createPopupElement(ticketName, currentValue, currentValuePurchased);
         document.body.appendChild(popup);
 
         const closePopup = () => {
@@ -102,9 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
         saleButton.addEventListener('click', async () => {
             const tickerSymbol = ticket.querySelector('[data-js="ticker"]').textContent;
             const currentQuantity = ticket.querySelector('[data-js="number_of_tickets"]').textContent;
+            const currentValuePurchased = parseFloat(ticket.querySelector('[data-js="value_purchased"]').textContent.replace('R$ ', ''))
             const ticketName = ticket.querySelector('[data-js="ticket-name"]').textContent;
             
-            const response = await createPopup(ticketName, currentQuantity);
+            const response = await createPopup(ticketName, currentQuantity, currentValuePurchased);
             
             if (response && response.result) {
                 const { success, message } = await handleApiRequest(
