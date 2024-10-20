@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from flask import current_app
-
 from src.domain.exceptions.tickets_exceptions import TicketNotFoundError
 
 from src.domain.entities.ticket_entity import TicketEntity
@@ -23,7 +21,7 @@ class MysqlServices(TicketInterface):
                     _highest_price=         ticket_dict['highest_price'],
                     _lowest_price=          ticket_dict['lowest_price'],
                     _average_price=         ticket_dict['average_price'],
-                    history=                ticket_dict['history']
+                    history=                eval(ticket_dict['history'])
                 )
         
         except Exception as err:

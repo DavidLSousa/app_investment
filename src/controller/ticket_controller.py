@@ -102,7 +102,7 @@ class TicketController:
                 _highest_price=         db_ticket._highest_price,
                 _lowest_price=          db_ticket._lowest_price,
                 _average_price=         db_ticket._average_price,
-                history=                eval(db_ticket.history) + [{ # type: ignore
+                history=                db_ticket.history + [{ # type: ignore
                     'number_of_sale_tickets': int(sanitazed_data['number_of_sale_tickets']),
                     'total_sale_value': float(sanitazed_data['total_sale_value']),
                     'date': cls.__get_datetime()
@@ -167,7 +167,7 @@ class TicketController:
             _highest_price=         price_metrics['highest_price'],
             _lowest_price=          price_metrics['lowest_price'],
             _average_price=         price_metrics['average_price'],
-            history=                eval(db_ticket.history) + [ # type: ignore
+            history=                db_ticket.history + [ # type: ignore
                 {
                     'qntTickets': new_data_ticket['number_of_tickets'],
                     'valuePerTicket': float(new_data_ticket['total_value_purchased']) / int(new_data_ticket['number_of_tickets']),
