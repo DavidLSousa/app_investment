@@ -4,6 +4,8 @@
 [x] add dompurify na main_page?
 [ ] add dompurify no input add tickets
 
+[ ] Add validação dos dados no backend
+
 # Tests
 [ ] Checar se os tests estão corretos
 
