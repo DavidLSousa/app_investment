@@ -1,8 +1,9 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, ANY
 import pytest
 import json
 
 from main import app
+from src.domain.entities.ticket_entity import TicketEntity
 from src.controller.ticket_controller import TicketController
 
 # ============================== render tests =============================== #
@@ -10,16 +11,17 @@ from src.controller.ticket_controller import TicketController
 def test_render_all_page():
     # Arrange
     mock_tickets = [
-        {
-            'ticket': 'AAPL',
-            'nameTicket': 'Apple Inc.',
-            'number_of_tickets': 10,
-            'total_value_purchased': 1500.00,
-            'highest_price': 160.00,
-            'lowest_price': 140.00,
-            'average_price': 150.00
-        }
-    ]
+        TicketEntity(
+        ticket='AAPL',
+        nameTicket='Apple Inc.',
+        _number_of_tickets=10,
+        _total_value_purchased=1500.00,
+        _highest_price=160.00,
+        _lowest_price=140.00,
+        _average_price=150.00,
+        history=[],
+        id=ANY 
+    )]
     
     # Act
     with patch('src.controller.ticket_controller.TicketController.database_adapter') as mock_db:
@@ -33,15 +35,7 @@ def test_render_all_page():
     mock_render.assert_called_once_with(
         'all_tickets_page.html',
         title_page='Meus Ativos',
-        tickets=[{
-            'ticket': 'AAPL',
-            'nameTicket': 'Apple Inc.',
-            'highest_price': '160.00',
-            'lowest_price': '140.00',
-            'average_price': '150.00',
-            'number_of_tickets': 10,
-            'total_value_purchased': '1500.00'
-        }]
+        tickets=mock_tickets
     )
     assert result[0] == 'rendered_template'
 
@@ -79,7 +73,7 @@ def test_render_all_page_exception():
 
 # ============================== backend tests ============================== #
 
-def test_add_ticket_controller_success():
+def test_add_ticket_controller_success(): # Refazer apos add a feature de validação no backend
     mock_ticket_data = [
         {
             'ticket': 'AAPL',
@@ -105,16 +99,16 @@ def test_add_ticket_controller_ticket_exists():
         }
     ]
 
-    mock_db_ticket = {
-        'ticket': 'AAPL',
-        'nameTicket': 'Apple Inc.',
-        'number_of_tickets': 10,
-        'total_value_purchased': 1500.00,
-        'highest_price': 160.00,
-        'lowest_price': 140.00,
-        'average_price': 150.00,
-        'history': "[{ 'qntTickets': 10, 'valuePerTicket': 150.00, 'date': '01/01/2024 00:00:00' }]"
-    }
+    mock_db_ticket = TicketEntity(
+        ticket= 'AAPL',
+        nameTicket= 'Apple Inc.',
+        _number_of_tickets= 10,
+        _total_value_purchased= 1500.00,
+        _highest_price= 160.00,
+        _lowest_price= 140.00,
+        _average_price= 150.00,
+        history= [{ 'qntTickets': 10, 'valuePerTicket': 150.00, 'date': '01/01/2024 00:00:00' }]
+    )
 
     with patch('src.controller.ticket_controller.TicketController.database_adapter') as mock_db:
         mock_db.get_ticket.return_value = mock_db_ticket  # Simula que o ticket já existe
@@ -138,16 +132,16 @@ def test_sale_ticket_controller_success():
         'total_sale_value': 800.00
     }
 
-    mock_db_ticket = {
-        'ticket': 'AAPL',
-        'nameTicket': 'Apple Inc.',
-        'number_of_tickets': 10,
-        'total_value_purchased': 1500.00,
-        'highest_price': 160.00,
-        'lowest_price': 140.00,
-        'average_price': 150.00,
-        'history': '[]'
-    }
+    mock_db_ticket = TicketEntity(
+        ticket= 'AAPL',
+        nameTicket= 'Apple Inc.',
+        _number_of_tickets= 10,
+        _total_value_purchased= 1500.00,
+        _highest_price= 160.00,
+        _lowest_price= 140.00,
+        _average_price= 150.00,
+        history= []
+    )
 
     with patch('src.controller.ticket_controller.TicketController.database_adapter') as mock_db:
         mock_db.get_ticket.return_value = mock_db_ticket  # Simula que o ticket existe
